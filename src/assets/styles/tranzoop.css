@@ -1,0 +1,91 @@
+:root {
+  /* =========================================================
+     SPACING
+  ========================================================= */
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 72px;
+  --space-4xl: 96px;
+
+  /* =========================================================
+     RADIUS
+  ========================================================= */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* =========================================================
+     TYPOGRAPHY
+  ========================================================= */
+
+  --font-family:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  /* =========================================================
+     TRANSITIONS
+  ========================================================= */
+
+  --transition-fast: 180ms ease;
+  --transition-normal: 280ms ease;
+  --transition-slow: 400ms ease;
+
+    /* =========================================================
+     DARK COLORS
+  ========================================================= */
+  --color-primary: #0b1220;
+  --color-dark-primary: #070d18;
+
+  --color-accent: #f9a825;
+  --color-dark-accent: #d88900;
+
+  --color-surface: #111827;
+  --color-surface-soft: #172235;
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text: #f1f5f9;
+
+  --color-white: #ffffff;
+
+  --color-border: #263449;
+  --color-light-border: rgba(255, 255, 255, 0.10);
+
+  --color-shadow: rgba(0, 0, 0, 0.40);
+  --color-success: #16805a;
+
+  --color-light-green: #070d18;
+  
+}
+[data-theme="light"] {
+  --color-primary: #111827;
+  --color-dark-primary: #0b1220;
+
+  --color-accent: #f9a825;
+  --color-dark-accent: #d88900;
+
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7f8fa;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text: #111111;
+
+  --color-white: #ffffff;
+
+  --color-border: #d9dde3;
+  --color-light-border: rgba(17, 24, 39, 0.08);
+
+  --color-shadow: rgba(0, 0, 0, 0.08);
+
+  --color-light-green: #eceee9;
+}
