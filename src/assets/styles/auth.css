@@ -377,21 +377,13 @@
 
 .password-toggle {
   position: absolute;
-
   right: 12px;
-
   padding: 4px;
-
   border: none;
-
   background: transparent;
-
-  color: var(--color-accent);
-
+  color: var(--color-text-secondary);
   font-size: 9px;
-
-  font-weight: 800;
-
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -446,19 +438,12 @@
 
 .login-register button {
   padding: 0;
-
   border: none;
-
   background: transparent;
-
   color: var(--color-accent);
-
   font-family: inherit;
-
   font-size: 10px;
-
-  font-weight: 800;
-
+  font-weight: 700;
   cursor: pointer;
 }
 

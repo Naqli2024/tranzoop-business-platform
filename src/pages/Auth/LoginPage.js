@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 import { ThemeContext } from "../../helpers/ThemeContext";
 import loginImage from "../../assets/images/login.jpeg";
 import "../../assets/styles/auth.css";
+import { VscEye } from "react-icons/vsc";
+import { VscEyeClosed } from "react-icons/vsc";
 
 const LoginPage = () => {
   const { theme } = useContext(ThemeContext);
@@ -63,13 +65,10 @@ const LoginPage = () => {
             onSubmit={handleSubmit}
           >
             <div className="login-field">
-
               <label htmlFor="email">
                 Email address
               </label>
-
               <div className="login-input-wrapper">
-
                 <input
                   id="email"
                   type="email"
@@ -114,13 +113,9 @@ const LoginPage = () => {
                   onClick={() =>
                     setShowPassword((prev) => !prev)
                   }
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
+                  
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? <VscEyeClosed size={20}/> : <VscEye size={20}/>}
                 </button>
               </div>
             </div>

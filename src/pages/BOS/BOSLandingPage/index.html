@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tranzoop — Run Your Business With AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#0a0f0d;
+  --ink-2:#0d1512;
+  --panel:#121b17;
+  --panel-2:#182420;
+  --line:#25322b;
+  --line-soft:#1b2620;
+  --amber:#ff9f1c;
+  --amber-dim:#7a5316;
+  --teal:#2dd4bf;
+  --teal-dim:#134e48;
+  --green:#4ade80;
+  --red:#ff6a5c;
+  --text-hi:#f3f6f2;
+  --text-mid:#a7b3ac;
+  --text-low:#69766f;
+  --radius:14px;
+  --radius-lg:22px;
+  --maxw:1240px;
+  --serif-mono:'JetBrains Mono', monospace;
+  --display:'Space Grotesk', sans-serif;
+  --body:'Inter', sans-serif;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background: radial-gradient(1200px 700px at 78% -10%, rgba(143, 168, 136, 0.16), transparent 60%), radial-gradient(900px 600px at 10% 0%, rgba(14, 124, 74, 0.35), transparent 55%), linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+  color:var(--text-hi);
+  font-family:var(--body);
+  line-height:1.5;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{display:block; max-width:100%;}
+a{color:inherit; text-decoration:none;}
+ul{list-style:none;}
+button{font-family:inherit; cursor:pointer;}
+
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size:64px 64px;
+  pointer-events:none;
+  z-index:0;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px; position:relative; z-index:1;}
+section{position:relative; z-index:1;}
+
+.eyebrow{
+  font-family:var(--serif-mono);
+  font-size:12px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--amber);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.eyebrow::before{
+  content:"";
+  width:7px; height:7px; border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 0 3px rgba(255,159,28,0.18);
+}
+
+h1,h2,h3,h4{font-family:var(--display); font-weight:600; letter-spacing:-0.01em; color:var(--text-hi);}
+.mono{font-family:var(--serif-mono);}
+
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .7s cubic-bezier(.16,.8,.3,1), transform .7s cubic-bezier(.16,.8,.3,1);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.reveal-delay-1.in{transition-delay:.08s;}
+.reveal-delay-2.in{transition-delay:.16s;}
+.reveal-delay-3.in{transition-delay:.24s;}
+.reveal-delay-4.in{transition-delay:.32s;}
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1; transform:none; transition:none;}
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
+
+header{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  backdrop-filter:blur(14px) saturate(140%);
+  background:rgb(17 51 23 / 70%);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav{
+  max-width:var(--maxw); margin:0 auto; padding:16px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo{
+  font-family:var(--display); font-weight:700; font-size:19px;
+  letter-spacing:0.02em; color:var(--text-hi);
+  display:flex; align-items:center; gap:9px;
+}
+.logo .dot{width:9px; height:9px; border-radius:2px; background:var(--amber); transform:rotate(45deg); box-shadow:0 0 12px rgba(255,159,28,0.55);}
+.nav-links{display:flex; gap:30px; align-items:center;}
+.nav-links a{
+  font-size:14px; color:var(--text-mid); font-weight:500;
+  transition:color .2s;
+  position:relative;
+}
+.nav-links a:hover{color:var(--text-hi);}
+.nav-cta{
+  padding:10px 18px; border-radius:9px;
+  background:var(--amber); color:black !important; font-weight:700; font-size:13.5px;
+  border:1px solid var(--amber);
+  transition:transform .2s, box-shadow .2s;
+}
+.nav-cta:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(255,159,28,0.28);}
+.nav-toggle{display:none; flex-direction:column; gap:5px; background:none; border:none; padding:6px;}
+.nav-toggle span{width:22px; height:2px; background:var(--text-hi); border-radius:2px;}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 26px; border-radius:10px; font-weight:700; font-size:14.5px;
+  border:1px solid transparent; transition:all .22s cubic-bezier(.16,.8,.3,1);
+}
+.btn-primary{background:var(--amber); color:#1a1206; box-shadow:0 0 0 rgba(255,159,28,0);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,159,28,0.3);}
+.btn-ghost{background:transparent; color:var(--text-hi); border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--teal); color:var(--teal);}
+
+.hero{padding:168px 0 100px; position:relative; overflow:hidden;}
+.hero::after{
+  content:""; position:absolute; top:-200px; right:-180px; width:640px; height:640px;
+  background:radial-gradient(circle, rgba(255,159,28,0.14), transparent 65%);
+  filter:blur(10px); z-index:0; pointer-events:none;
+}
+.hero-grid{
+  display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
+}
+.hero h1{
+  font-size:clamp(38px, 5.4vw, 66px); line-height:1.03; margin-bottom:22px;
+}
+.hero h1 em{font-style:normal; color:var(--amber);}
+.hero p.lede{font-size:18px; color:var(--text-mid); max-width:520px; margin-bottom:14px; line-height:1.6;}
+.hero p.sub{font-size:15px; color:var(--text-low); max-width:540px; margin-bottom:32px; line-height:1.65;}
+.hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:36px;}
+.hero-ticker{
+  display:flex; gap:26px; flex-wrap:wrap; font-family:var(--serif-mono); font-size:12.5px; color:var(--text-low);
+}
+.hero-ticker span b{color:var(--text-hi); font-weight:600;}
+
+.hero-search{margin-bottom:32px; position:relative; max-width:520px;}
+.search-box{
+  display:flex; align-items:center; gap:10px;
+  background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:6px 8px 6px 18px;
+  transition:border-color .22s, box-shadow .22s;
+}
+.search-box:focus-within{border-color:var(--amber); box-shadow:0 0 0 4px rgba(255,159,28,0.12);}
+.search-box .sicon{color:var(--text-low); flex-shrink:0; transition:color .22s;}
+.search-box:focus-within .sicon{color:var(--amber);}
+.search-box input{
+  flex:1; background:none; border:none; outline:none;
+  font-family:var(--body); font-size:14.5px; color:var(--text-hi); padding:12px 0;
+}
+.search-box input::placeholder{color:var(--text-low);}
+.search-go{
+  flex-shrink:0; width:38px; height:38px; border-radius:9px; border:none;
+  background:var(--amber); color:#1a1206; font-weight:700; font-size:15px;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s, box-shadow .2s;
+}
+.search-go:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(255,159,28,0.28);}
+
+.search-suggest{
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:14px;
+  font-size:12.5px; color:var(--text-low);
+}
+.sugg-chip{
+  padding:6px 13px; border-radius:20px; border:1px solid var(--line);
+  background:var(--panel); color:var(--text-mid); font-size:12px; font-weight:500;
+  transition:all .2s;
+}
+.sugg-chip:hover{border-color:var(--teal); color:var(--teal); background:rgba(45,212,191,0.06);}
+
+.search-results{
+  position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:20;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:14px;
+  box-shadow:0 24px 60px -12px rgba(0,0,0,0.55);
+  overflow:hidden; opacity:0; visibility:hidden; transform:translateY(-6px);
+  transition:opacity .2s, transform .2s, visibility .2s;
+}
+.search-results.show{opacity:1; visibility:visible; transform:translateY(0);}
+.search-result{
+  display:block; width:100%; text-align:left; padding:13px 18px; border:none; background:none;
+  border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background .15s;
+}
+.search-result:last-child{border-bottom:none;}
+.search-result:hover, .search-result.active{background:rgba(255,159,28,0.07);}
+.search-result .rt{font-size:13.5px; font-weight:600; color:var(--text-hi); display:flex; justify-content:space-between; gap:10px;}
+.search-result .rt .tag{font-family:var(--serif-mono); font-size:10px; color:var(--amber); text-transform:uppercase; letter-spacing:.05em; flex-shrink:0; padding-top:2px;}
+.search-result .rs{font-size:12px; color:var(--text-mid); margin-top:3px; line-height:1.5;}
+.search-empty{padding:16px 18px; font-size:13px; color:var(--text-low);}
+
+@keyframes flashHighlight{
+  0%{box-shadow:0 0 0 0 rgba(255,159,28,0);}
+  25%{box-shadow:0 0 0 3px rgba(255,159,28,0.5);}
+  100%{box-shadow:0 0 0 0 rgba(255,159,28,0);}
+}
+.search-flash{animation:flashHighlight 1.4s ease-out; border-radius:var(--radius-lg);}
+
+.console{
+  background:linear-gradient(180deg, var(--panel), var(--panel-2));
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+.console-bar{
+  display:flex; align-items:center; gap:8px; padding:14px 18px;
+  border-bottom:1px solid var(--line-soft); background:rgba(255,255,255,0.015);
+}
+.console-bar .cdot{width:9px; height:9px; border-radius:50%; background:var(--line);}
+.console-bar .clabel{margin-left:auto; font-family:var(--serif-mono); font-size:11px; color:var(--text-low); letter-spacing:.06em;}
+.console-body{padding:22px; min-height:340px; display:flex; flex-direction:column; gap:16px;}
+.console-msg{
+  align-self:flex-start; max-width:88%;
+  background:var(--panel-2); border:1px solid var(--line);
+  padding:12px 15px; border-radius:12px 12px 12px 3px;
+  font-size:13.5px; color:var(--text-hi); line-height:1.55;
+}
+.console-msg .who{font-family:var(--serif-mono); font-size:10.5px; color:var(--teal); text-transform:uppercase; letter-spacing:.08em; display:block; margin-bottom:5px;}
+.console-typing::after{content:"▌"; color:var(--amber); animation:blink 1s step-end infinite; margin-left:2px;}
+@keyframes blink{50%{opacity:0;}}
+.console-fields{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  background:rgba(45,212,191,0.05); border:1px solid var(--teal-dim);
+  border-radius:12px; padding:14px 16px; font-family:var(--serif-mono); font-size:12px;
+  opacity:0; transform:translateY(6px); transition:opacity .5s, transform .5s;
+}
+.console-fields.show{opacity:1; transform:translateY(0);}
+.console-fields .f{display:flex; flex-direction:column; gap:2px;}
+.console-fields .f .k{color:var(--text-low); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;}
+.console-fields .f .v{color:var(--text-hi); font-weight:600;}
+.console-event{
+  align-self:flex-start; margin-top:-4px;
+  font-family:var(--serif-mono); font-size:11px; color:var(--green);
+  border:1px solid rgba(74,222,128,0.3); background:rgba(74,222,128,0.06);
+  padding:5px 10px; border-radius:20px; opacity:0; transition:opacity .5s;
+}
+.console-event.show{opacity:1;}
+
+.channels{padding:54px 0; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); background:var(--ink-2);}
+.channels-inner{display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+.channels-label{font-family:var(--serif-mono); font-size:12px; color:var(--text-low); text-transform:uppercase; letter-spacing:.08em; max-width:200px;}
+.channel-list{display:flex; gap:0; flex-wrap:wrap; flex:1; justify-content:flex-end;}
+.channel-item{
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:0 22px; border-left:1px solid var(--line-soft);
+  color:var(--text-mid); font-size:12.5px; font-weight:500; text-align:center;
+  transition:color .2s;
+}
+.channel-item:first-child{border-left:none;}
+.channel-item:hover{color:var(--amber);}
+.channel-item .ic{width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:var(--teal);}
+.channel-item:hover .ic{color:var(--amber);}
+
+.sect{padding:120px 0;}
+.sect-head{max-width:680px; margin-bottom:56px;}
+.sect-head h2{font-size:clamp(28px,3.6vw,42px); margin:14px 0 16px; line-height:1.12;}
+.sect-head p{color:var(--text-mid); font-size:16px; line-height:1.65;}
+
+.promise-track{position:relative; padding-top:8px;}
+.promise-line{
+  position:absolute; top:33px; left:0; right:0; height:1px; background:var(--line);
+  z-index:0;
+}
+.promise-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:18px; position:relative; z-index:1;}
+.promise-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 18px; transition:transform .25s, border-color .25s, background .25s;
+}
+.promise-card:hover{transform:translateY(-6px); border-color:var(--amber); background:var(--panel-2);}
+.promise-idx{
+  width:36px; height:36px; border-radius:50%; background:var(--ink);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif-mono); font-size:12px; color:var(--amber); margin-bottom:18px;
+}
+.promise-card h4{font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--amber); margin-bottom:10px;}
+.promise-card p{font-size:14px; color:var(--text-mid); line-height:1.5;}
+
+.copilot-layout{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
+.translate-list{display:flex; flex-direction:column; gap:2px;}
+.translate-row{
+  display:grid; grid-template-columns:1fr 24px 1fr; align-items:center; gap:14px;
+  padding:16px 0; border-bottom:1px solid var(--line-soft);
+}
+.translate-row .old{font-family:var(--serif-mono); font-size:12.5px; color:var(--text-low); text-decoration:line-through; text-decoration-color:rgba(255,106,92,0.4);}
+.translate-row .arrow{color:var(--teal); font-size:14px;}
+.translate-row .new{font-size:14.5px; color:var(--text-hi); font-weight:500;}
+
+.role-chips{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px;}
+.role-chip{
+  padding:8px 14px; border-radius:20px; border:1px solid var(--line);
+  font-size:12.5px; color:var(--text-mid); background:var(--panel);
+  transition:all .2s;
+}
+.role-chip:hover{border-color:var(--teal); color:var(--teal); background:rgba(45,212,191,0.06);}
+
+/* ---- FIXED VIDEO EMBED ----
+   - responsive 16:9 box instead of fixed 600x300px (was overflowing / breaking layout on smaller screens)
+   - object-fit:contain so the full frame of the video is always visible, nothing cropped
+   - fade-in on canplay to remove the black "splash" flash before the first frame paints
+*/
+.copilot-card{
+  width:100%;
+  max-width:600px;
+  /* Matches the source recording's real 694x472 (~1.47:1) frame exactly,
+     so object-fit:contain never has to add extra pillarbox bars on top of
+     the dark padding already baked into the video itself. */
+  aspect-ratio:694 / 472;
+  border-radius:20px;
+  background:#000;
+  overflow:hidden;
+  position:relative;
+  border:1px solid var(--line);
+}
+.copilot-video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  background:#000;
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.copilot-video.loaded{opacity:1;}
+
+.answer-line{display:flex; gap:10px; align-items:flex-start; margin-bottom:14px; font-size:13.5px; color:var(--text-mid); line-height:1.6;}
+.answer-line .bullet{color:var(--amber); margin-top:2px; flex-shrink:0;}
+
+.leak-panel{
+  background:linear-gradient(155deg, var(--panel), var(--ink-2));
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:38px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:44px;
+}
+.leak-stats{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-content:start;}
+.leak-stat{border-left:2px solid var(--line); padding-left:14px;}
+.leak-stat.hi{border-left-color:var(--amber);}
+.leak-stat .val{font-family:var(--display); font-size:26px; font-weight:700; color:var(--text-hi);}
+.leak-stat .lab{font-size:11.5px; color:var(--text-low); text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
+.leak-opps h4{font-family:var(--serif-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-low); margin-bottom:18px;}
+.leak-bar-row{margin-bottom:16px;}
+.leak-bar-row .lbl{display:flex; justify-content:space-between; font-size:13px; color:var(--text-mid); margin-bottom:6px;}
+.leak-bar-row .lbl b{color:var(--text-hi); font-family:var(--serif-mono); font-weight:500;}
+.leak-bar-track{height:7px; border-radius:6px; background:var(--line-soft); overflow:hidden;}
+.leak-bar-fill{height:100%; width:0%; border-radius:6px; background:linear-gradient(90deg, var(--amber), #ffcf85); transition:width 1.3s cubic-bezier(.16,.8,.3,1);}
+.leak-total{margin-top:20px; padding-top:18px; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; align-items:baseline;}
+.leak-total .t-lab{font-size:13px; color:var(--text-mid);}
+.leak-total .t-val{font-family:var(--display); font-size:24px; font-weight:700; color:var(--amber);}
+
+.industry-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+.industry-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px; min-height:230px; display:flex; flex-direction:column; justify-content:space-between;
+  cursor:pointer; transition:transform .3s, border-color .3s, background .3s;
+  position:relative; overflow:hidden;
+}
+.industry-card:hover{transform:translateY(-6px); border-color:var(--teal);}
+.industry-card .ic{width:34px; height:34px; color:var(--amber); margin-bottom:20px;}
+.industry-card h4{font-size:17px; margin-bottom:8px;}
+.industry-card .flow{font-family:var(--serif-mono); font-size:10.5px; color:var(--text-low); line-height:1.6; letter-spacing:.01em;}
+.industry-card .price{margin-top:16px; font-family:var(--serif-mono); font-size:12px; color:var(--teal);}
+.industry-card.big{grid-column:span 2;}
+
+.wf-layout{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+.wf-methods{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:28px;}
+.wf-method{
+  border:1px solid var(--line); background:var(--panel); border-radius:10px;
+  padding:14px 16px; font-size:13px; color:var(--text-mid); display:flex; align-items:center; gap:10px;
+}
+.wf-method .dotm{width:6px; height:6px; border-radius:50%; background:var(--teal); flex-shrink:0;}
+
+.twin-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden;
+}
+.twin-head{padding:18px 22px; border-bottom:1px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center;}
+.twin-head .name{font-family:var(--display); font-weight:600; font-size:15px;}
+.twin-status{
+  font-family:var(--serif-mono); font-size:10.5px; padding:4px 10px; border-radius:20px;
+  background:rgba(74,222,128,0.1); color:var(--green); border:1px solid rgba(74,222,128,0.3);
+  display:flex; align-items:center; gap:6px;
+}
+.twin-status .pulse{width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.3;}}
+.twin-body{padding:20px 22px; display:grid; grid-template-columns:1fr 1fr; gap:16px 20px;}
+.twin-row .k{font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-low); margin-bottom:3px;}
+.twin-row .v{font-family:var(--serif-mono); font-size:14.5px; color:var(--text-hi); font-weight:500;}
+
+.vision-modes{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+.vmode{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:20px 18px; transition:transform .25s, border-color .25s;
+}
+.vmode:hover{transform:translateY(-6px); border-color:var(--teal);}
+.vmode .vn{font-family:var(--serif-mono); font-size:11px; color:var(--text-low); margin-bottom:10px;}
+.vmode h5{font-size:14.5px; margin-bottom:8px;}
+.vmode p{font-size:12.5px; color:var(--text-mid); line-height:1.5;}
+.vmode.locked{opacity:0.72;}
+.vmode.locked h5::after{content:" 🔒"; font-size:11px;}
+
+.audit-flow{display:flex; align-items:center; gap:0; overflow-x:auto; padding:6px 0 16px;}
+.audit-step{
+  flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:8px;
+  min-width:118px; text-align:center; position:relative;
+}
+.audit-step .dotc{width:34px; height:34px; border-radius:50%; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-family:var(--serif-mono); font-size:11px; color:var(--teal);}
+.audit-step span.lab{font-size:11.5px; color:var(--text-mid); max-width:110px;}
+.audit-arrow{color:var(--line); font-size:16px; padding:0 6px; flex:0 0 auto;}
+
+.vision-split{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; margin-top:56px;}
+.score-panel{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); padding:28px;}
+.score-panel h4{font-family:var(--serif-mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-low); margin-bottom:20px;}
+.score-row{display:flex; align-items:center; gap:14px; margin-bottom:16px;}
+.score-row .slabel{width:110px; font-size:13px; color:var(--text-mid); flex-shrink:0;}
+.score-track{flex:1; height:7px; border-radius:6px; background:var(--line-soft); overflow:hidden;}
+.score-fill{height:100%; border-radius:6px; background:linear-gradient(90deg, var(--teal), var(--amber)); width:0%; transition:width 1.2s cubic-bezier(.16,.8,.3,1);}
+.score-row .sval{width:38px; text-align:right; font-family:var(--serif-mono); font-size:12.5px; color:var(--text-hi);}
+
+.evidence-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden;}
+.evidence-head{padding:16px 20px; border-bottom:1px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center;}
+.evidence-head .et{font-family:var(--serif-mono); font-size:11px; color:var(--red); text-transform:uppercase; letter-spacing:.06em;}
+.evidence-body{padding:18px 20px; display:flex; flex-direction:column; gap:12px;}
+.evidence-line{display:flex; justify-content:space-between; font-size:13px; color:var(--text-mid); border-bottom:1px dashed var(--line-soft); padding-bottom:10px;}
+.evidence-line b{color:var(--text-hi); font-weight:500; font-family:var(--serif-mono); font-size:12.5px;}
+.evidence-impact{margin-top:4px; padding:12px 14px; background:rgba(255,159,28,0.06); border:1px solid var(--amber-dim); border-radius:10px; font-size:12.5px; color:var(--text-mid);}
+.evidence-impact b{color:var(--amber);}
+
+.graph-wrap{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:44px 24px; display:flex; justify-content:center; overflow:hidden;
+}
+.graph-node{fill:var(--panel-2); stroke:var(--line); stroke-width:1;}
+.graph-node-text{fill:var(--text-mid); font-family:'JetBrains Mono', monospace; font-size:10.5px;}
+.graph-edge{stroke:var(--line); stroke-width:1; fill:none;}
+.graph-edge.active{stroke:var(--teal); stroke-width:1.4; stroke-dasharray:4 4; animation:dash 20s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-200;}}
+.graph-profit circle{fill:rgba(255,159,28,0.12); stroke:var(--amber);}
+.graph-profit text{fill:var(--amber); font-weight:600;}
+
+.pricing-tabs{display:flex; gap:8px; margin-bottom:40px; border:1px solid var(--line); border-radius:10px; padding:4px; width:fit-content;}
+.pricing-tab{padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; color:var(--text-mid); transition:all .2s; border:none; background:transparent;}
+.pricing-tab.active{background:var(--amber); color:#1a1206;}
+.pricing-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px;}
+.price-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 20px; display:flex; flex-direction:column; transition:transform .25s, border-color .25s;
+}
+.price-card:hover{transform:translateY(-6px); border-color:var(--amber);}
+.price-card.feat{border-color:var(--amber); background:linear-gradient(160deg, var(--panel-2), var(--panel));}
+.price-card .tier{font-family:var(--serif-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); margin-bottom:14px;}
+.price-card .amt{font-family:var(--display); font-size:26px; font-weight:700; margin-bottom:4px;}
+.price-card .amt span{font-size:12px; color:var(--text-low); font-weight:400; font-family:var(--body);}
+.price-card .pos{font-size:12.5px; color:var(--text-mid); margin-top:8px; line-height:1.5; flex:1;}
+.industry-price-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+.iprice-row{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+.iprice-row .in{font-weight:600; font-size:13.5px; margin-bottom:6px;}
+.iprice-row .ip{font-family:var(--serif-mono); font-size:12px; color:var(--teal);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.ladder{display:flex; gap:0; overflow-x:auto; padding-bottom:14px; scrollbar-width:thin;}
+.ladder-step{
+  flex:0 0 auto; min-width:168px; padding:20px 18px; border-right:1px dashed var(--line);
+  position:relative;
+}
+.ladder-step:last-child{border-right:none;}
+.ladder-step .n{font-family:var(--serif-mono); font-size:11px; color:var(--text-low); margin-bottom:10px;}
+.ladder-step h5{font-size:14.5px; margin-bottom:6px;}
+.ladder-step p{font-size:12px; color:var(--text-mid); line-height:1.5;}
+.ladder-step::after{
+  content:""; position:absolute; top:20px; right:-4px; width:7px; height:7px; border-radius:50%;
+  background:var(--ink); border:1px solid var(--line);
+}
+.ladder-step.on::after{background:var(--amber); border-color:var(--amber);}
+
+.faq-head{text-align:center; max-width:640px; margin:0 auto 56px;}
+.faq-head .eyebrow{justify-content:center;}
+.faq-head .eyebrow::before{content:"—"; background:none; box-shadow:none; width:auto; height:auto; border-radius:0; color:var(--amber); font-size:14px;}
+.faq-head h2{font-size:clamp(28px,3.6vw,42px); margin-top:16px;}
+.faq-list{max-width:820px; margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--line-soft);}
+.faq-item:first-child{border-top:1px solid var(--line-soft);}
+.faq-question{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:20px;
+  background:none; border:none; text-align:left; padding:24px 2px;
+  font-family:var(--display); font-size:16.5px; font-weight:600; color:var(--text-hi);
+  transition:color .2s;
+}
+.faq-question:hover{color:var(--amber);}
+.faq-icon{width:18px; height:18px; position:relative; flex-shrink:0;}
+.faq-icon::before,.faq-icon::after{
+  content:""; position:absolute; background:var(--amber); border-radius:2px;
+}
+.faq-icon::before{width:100%; height:2px; top:50%; left:0; transform:translateY(-50%);}
+.faq-icon::after{width:2px; height:100%; left:50%; top:0; transform:translateX(-50%); transition:transform .3s ease, opacity .3s ease;}
+.faq-item.open .faq-icon::after{transform:translateX(-50%) rotate(90deg); opacity:0;}
+.faq-answer-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s cubic-bezier(.16,.8,.3,1);}
+.faq-item.open .faq-answer-wrap{grid-template-rows:1fr;}
+.faq-answer-inner{overflow:hidden;}
+.faq-answer{padding:0 2px 26px; max-width:760px; color:var(--text-mid); font-size:14.5px; line-height:1.75;}
+
+.northstar{
+  text-align:center; padding:110px 0; position:relative;
+  background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(255,159,28,0.1), transparent 70%);
+}
+.northstar .eyebrow{justify-content:center; display:inline-flex; margin-bottom:20px;}
+.northstar h2{font-size:clamp(30px,5vw,54px); max-width:780px; margin:0 auto 20px; line-height:1.1;}
+.northstar h2 .amt{color:var(--amber);}
+.northstar p{color:var(--text-mid); max-width:560px; margin:0 auto 36px; font-size:16px;}
+.northstar .hero-actions{justify-content:center;}
+
+.cursor-glow{
+  position:fixed; width:420px; height:420px; border-radius:50%; pointer-events:none; z-index:999;
+  background: radial-gradient(circle, color-mix(in srgb, var(--amber) 6%, transparent), transparent 70%);
+  transform: translate(-50%,-50%); left:-500px; top:-500px; transition: left .3s ease-out, top .3s ease-out;
+}
+@media (max-width: 900px){ .cursor-glow{ display:none; } }
+
+footer{border-top:1px solid var(--line-soft); padding:64px 0 32px; background:var(--ink-2);}
+.foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:52px;}
+.foot-brand p{color:var(--text-mid); font-size:13.5px; margin-top:14px; max-width:280px; line-height:1.6;}
+.foot-col h5{font-family:var(--serif-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-low); margin-bottom:16px;}
+.foot-col a, .foot-col li{display:block; font-size:13.5px; color:var(--text-mid); margin-bottom:10px; transition:color .2s;}
+.foot-col a:hover{color:var(--amber);}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid var(--line-soft); font-size:12.5px; color:var(--text-low); flex-wrap:wrap; gap:12px;}
+
+@media (max-width: 980px){
+  .hero-grid{grid-template-columns:1fr;}
+  .console{max-width:560px;}
+  .promise-grid{grid-template-columns:repeat(3,1fr);}
+  .copilot-layout{grid-template-columns:1fr; gap:40px;}
+  .leak-panel{grid-template-columns:1fr; gap:32px;}
+  .industry-grid{grid-template-columns:repeat(2,1fr);}
+  .industry-card.big{grid-column:span 2;}
+  .wf-layout{grid-template-columns:1fr;}
+  .pricing-grid{grid-template-columns:repeat(3,1fr);}
+  .industry-price-grid{grid-template-columns:repeat(2,1fr);}
+  .foot-grid{grid-template-columns:1fr 1fr; gap:32px;}
+  .vision-modes{grid-template-columns:1fr 1fr;}
+  .vision-split{grid-template-columns:1fr; gap:32px;}
+}
+@media (max-width: 720px){
+  .nav-links{
+    position:fixed; top:64px; left:0; right:0; bottom:0;
+    background:var(--ink); flex-direction:column; padding:32px 28px; gap:22px;
+    transform:translateX(100%); transition:transform .3s ease; align-items:flex-start;
+    border-top:1px solid var(--line-soft);
+  }
+  .nav-links.open{transform:translateX(0);}
+  .nav-toggle{display:flex;}
+  .hero{padding:130px 0 70px;}
+  .channels-inner{flex-direction:column; align-items:flex-start;}
+  .channel-list{justify-content:flex-start;}
+  .channel-item{padding:0 16px 0 0; border-left:none;}
+  .promise-grid{grid-template-columns:1fr 1fr;}
+  .promise-line{display:none;}
+  .industry-grid{grid-template-columns:1fr;}
+  .industry-card.big{grid-column:span 1;}
+  .pricing-grid{grid-template-columns:1fr 1fr;}
+  .industry-price-grid{grid-template-columns:1fr;}
+  .foot-grid{grid-template-columns:1fr;}
+  .sect{padding:80px 0;}
+  .console-fields{grid-template-columns:1fr;}
+  .twin-body{grid-template-columns:1fr;}
+  .vision-modes{grid-template-columns:1fr;}
+  .audit-step{min-width:96px;}
+  .score-row .slabel{width:84px; font-size:12px;}
+  .copilot-card{max-width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<header>
+  <nav class="nav">
+    <div class="logo"><span class="dot"></span>TRANZOOP</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#product">Product</a></li>
+      <li><a href="#copilot">Copilot</a></li>
+      <li><a href="#vision">Vision</a></li>
+      <li><a href="#industries">Industries</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#cta" class="nav-cta">Book a demo</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow reveal in">AI Business Operating System</div>
+      <h1 class="reveal in" style="transition-delay:.05s">Run your business <em>with AI.</em></h1>
+      <p class="lede reveal in" style="transition-delay:.1s">People. Machines. Materials. Money — one operational truth, updated from wherever work already happens.</p>
+      <p class="sub reveal in" style="transition-delay:.15s">Speak it on a call. Send it on WhatsApp. Scan a QR on the shop floor. Tranzoop turns everyday business language into structured operations, costing and profit &amp; loss — no ERP training required.</p>
+      <div class="hero-search reveal in" style="transition-delay:.2s">
+        <div class="search-box">
+          <svg class="sicon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="heroSearch" placeholder="Search industries, pricing, features…" autocomplete="off" aria-label="Search Tranzoop">
+          <button class="search-go" id="heroSearchGo" aria-label="Search"><i class="bi bi-arrow-right"></i></button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+        <div class="search-suggest">
+          <span>Try:</span>
+          <button class="sugg-chip" data-q="pricing">Pricing</button>
+          <button class="sugg-chip" data-q="seafood">Seafood</button>
+          <button class="sugg-chip" data-q="copilot">Copilot</button>
+          <button class="sugg-chip" data-q="vision">Vision</button>
+          <button class="sugg-chip" data-q="whatsapp">WhatsApp</button>
+        </div>
+      </div>
+      <div class="hero-ticker reveal in" style="transition-delay:.25s">
+        <span>7 input channels · <b>App · WhatsApp · Email · Voice · QR · IoT · API</b></span>
+      </div>
+    </div>
+
+    <div class="console reveal in" style="transition-delay:.15s">
+      <div class="console-bar">
+        <span class="cdot" style="background:var(--red)"></span>
+        <span class="cdot" style="background:var(--amber)"></span>
+        <span class="cdot" style="background:var(--green)"></span>
+        <span class="clabel">TALK TO YOUR BUSINESS</span>
+      </div>
+      <div class="console-body" id="consoleBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHANNELS -->
+<section class="channels">
+  <div class="wrap channels-inner">
+    <div class="channels-label reveal">One ingestion layer. Every channel becomes the same Business Event.</div>
+    <div class="channel-list">
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+      </div>App</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>WhatsApp</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg>
+      </div>Email</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg>
+      </div>Voice</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><line x1="14" y1="14" x2="21" y2="14"/><line x1="14" y1="21" x2="21" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/></svg>
+      </div>QR / NFC</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+      </div>IoT / Edge</div>
+      <div class="channel-item reveal"><div class="ic">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      </div>API</div>
+    </div>
+  </div>
+</section>
+
+<!-- FIVE PROMISES -->
+<section class="sect" id="product">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">The Five Product Promises</div>
+      <h2>Record → Understand → Predict → Recommend → Act.</h2>
+      <p>Tranzoop is not another ERP with a chatbot bolted on. It's an operating system that answers five questions in order — and gets more capable at each stage as it earns your trust.</p>
+    </div>
+    <div class="promise-track">
+      <div class="promise-line"></div>
+      <div class="promise-grid">
+        <div class="promise-card reveal reveal-delay-1">
+          <div class="promise-idx">01</div>
+          <h4>Know</h4>
+          <p>What is happening in my business right now?</p>
+        </div>
+        <div class="promise-card reveal reveal-delay-2">
+          <div class="promise-idx">02</div>
+          <h4>Control</h4>
+          <p>Where are my people, jobs, machines, materials and money?</p>
+        </div>
+        <div class="promise-card reveal reveal-delay-3">
+          <div class="promise-idx">03</div>
+          <h4>Understand</h4>
+          <p>Why did cost, profit or productivity change?</p>
+        </div>
+        <div class="promise-card reveal reveal-delay-4">
+          <div class="promise-idx">04</div>
+          <h4>Improve</h4>
+          <p>Where can cost be reduced or output improved?</p>
+        </div>
+        <div class="promise-card reveal reveal-delay-4">
+          <div class="promise-idx">05</div>
+          <h4>Act</h4>
+          <p>Can Tranzoop prepare or execute the fix with permission?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COPILOT -->
+<section class="sect" id="copilot" style="background:var(--ink-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Tranzoop Copilot</div>
+      <h2>No ERP knowledge required.</h2>
+      <p>Employees don't learn menus — Tranzoop learns how the business already speaks. Say what happened, in English, Tamil, Hindi, or mixed language, and Copilot drafts the correct transaction.</p>
+    </div>
+    <div class="copilot-layout">
+      <div class="reveal">
+        <div class="translate-list">
+          <div class="translate-row"><span class="old">Create GRN</span><span class="arrow">→</span><span class="new">Did the material arrive?</span></div>
+          <div class="translate-row"><span class="old">Create debit note</span><span class="arrow">→</span><span class="new">Did you return anything to the supplier?</span></div>
+          <div class="translate-row"><span class="old">Production variance</span><span class="arrow">→</span><span class="new">Did you produce less than planned? What happened?</span></div>
+          <div class="translate-row"><span class="old">Post maintenance expense</span><span class="arrow">→</span><span class="new">What was repaired, and how much did it cost?</span></div>
+          <div class="translate-row"><span class="old">Allocate labour cost</span><span class="arrow">→</span><span class="new">Who worked on this job, and for how long?</span></div>
+        </div>
+        <div class="role-chips">
+          <div class="role-chip">Owner</div>
+          <div class="role-chip">Production Manager</div>
+          <div class="role-chip">Operator</div>
+          <div class="role-chip">Accountant</div>
+          <div class="role-chip">Salesperson</div>
+          <div class="role-chip">Mechanic / Technician</div>
+        </div>
+      </div>
+      <div class="copilot-card">
+        <video
+          id="copilotVideo"
+          class="copilot-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster=""
+        >
+          <source src="/ai-demo.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COST LEAKAGE -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">The Killer Owner Feature</div>
+      <h2>Where am I losing money?</h2>
+      <p>Tranzoop traces cost leakage back to people, machines, materials, procurement, waiting and rework — with evidence, an estimated impact, and a recommended action. Not just a red alert.</p>
+    </div>
+    <div class="leak-panel reveal">
+      <div class="leak-stats">
+        <div class="leak-stat"><div class="val mono">₹8.42L</div><div class="lab">Revenue, yesterday</div></div>
+        <div class="leak-stat"><div class="val mono">₹6.18L</div><div class="lab">Operating cost</div></div>
+        <div class="leak-stat"><div class="val mono">₹2.24L</div><div class="lab">Operating profit</div></div>
+        <div class="leak-stat hi"><div class="val mono">26.6%</div><div class="lab">Margin</div></div>
+      </div>
+      <div class="leak-opps">
+        <h4>AI found 5 opportunities</h4>
+        <div class="leak-bar-row" data-pct="30">
+          <div class="lbl"><span>Material wastage</span><b>₹14,600</b></div>
+          <div class="leak-bar-track"><div class="leak-bar-fill"></div></div>
+        </div>
+        <div class="leak-bar-row" data-pct="26">
+          <div class="lbl"><span>Machine 4 idle time</span><b>₹12,400</b></div>
+          <div class="leak-bar-track"><div class="leak-bar-fill"></div></div>
+        </div>
+        <div class="leak-bar-row" data-pct="20">
+          <div class="lbl"><span>Team B overtime</span><b>₹9,800</b></div>
+          <div class="leak-bar-track"><div class="leak-bar-fill"></div></div>
+        </div>
+        <div class="leak-bar-row" data-pct="15">
+          <div class="lbl"><span>Vendor price variance</span><b>₹7,200</b></div>
+          <div class="leak-bar-track"><div class="leak-bar-fill"></div></div>
+        </div>
+        <div class="leak-bar-row" data-pct="9">
+          <div class="lbl"><span>Unbilled employee hours</span><b>₹4,200</b></div>
+          <div class="leak-bar-track"><div class="leak-bar-fill"></div></div>
+        </div>
+        <div class="leak-total">
+          <span class="t-lab">Potential savings identified</span>
+          <span class="t-val">₹48,200</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="sect" id="industries" style="background:var(--ink-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Industry Packs</div>
+      <h2>Deep context, per industry — built on one core.</h2>
+      <p>Tranzoop Core handles CRM, employees, work orders, inventory, procurement, invoicing and P&amp;L. Industry Packs add the vocabulary and workflow logic each trade actually runs on.</p>
+    </div>
+    <div class="industry-grid">
+      <div class="industry-card big reveal reveal-delay-1">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+          <h4>Seafood</h4>
+          <div class="flow">Procurement → Landing → Lot → Processing → Wastage → Cold Storage → Packing → Export Order → P&amp;L</div>
+        </div>
+        <div class="price">From ₹7,999/mo</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-2">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17h13v-5H3v5zM16 12l2-4h3l2 4v5h-2M6 20a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM16.5 20a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg></div>
+          <h4>Transport</h4>
+          <div class="flow">Vehicle → Trip → Driver → Diesel → Toll → Tyre → Freight → Vehicle P&amp;L</div>
+        </div>
+        <div class="price">From ₹2,999/mo</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-3">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1a4 4 0 0 1-4.5 5.7L6.3 21 3 17.7l9.1-9.1a4 4 0 0 1 5.7-4.5l-3 3.1z"/></svg></div>
+          <h4>Motor Workshop</h4>
+          <div class="flow">Complaint → Estimate → Job Card → Mechanic → Parts → QC → Invoice</div>
+        </div>
+        <div class="price">From ₹1,999/mo</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-4">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h5l1 3-3 2 6 8v5H6v-6l4-6-3-2z"/></svg></div>
+          <h4>Tailor</h4>
+          <div class="flow">Measurement → Cutting → Tailor → Trial → Alteration → Delivery</div>
+        </div>
+        <div class="price">From ₹799/mo</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-1">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v12H4zM8 20h8M9 16v4M15 16v4"/></svg></div>
+          <h4>Creative Agency</h4>
+          <div class="flow">Project → Task → Employee Hours → Revision → Billing → Client Margin</div>
+        </div>
+        <div class="price">From ₹1,999/mo</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-2">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h4>Tyre Shop</h4>
+          <div class="flow">SKU → Fitment → Alignment → Service History → Warranty → Margin</div>
+        </div>
+        <div class="price">From ₹1,499/mo</div>
+      </div>
+      <div class="industry-card big reveal reveal-delay-3">
+        <div>
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/></svg></div>
+          <h4>Event Hall</h4>
+          <div class="flow">Enquiry → Booking → Package → Vendor → Advance → Event Expense → Event P&amp;L</div>
+        </div>
+        <div class="price">From ₹1,999/mo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFORCE / IoT -->
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Tranzoop Workforce &amp; Connected Machines</div>
+      <h2>Login ≠ Attendance ≠ Work ≠ Productivity.</h2>
+      <p>Dynamic QR, NFC, geofence and kiosk sign-in connect employee identity to presence, work sessions, machines, output and labour cost — not just a punch clock.</p>
+    </div>
+    <div class="wf-layout">
+      <div class="reveal">
+        <div class="wf-methods">
+          <div class="wf-method"><span class="dotm"></span>Dynamic QR — rotating, anti-proxy</div>
+          <div class="wf-method"><span class="dotm"></span>NFC — machines &amp; workstations</div>
+          <div class="wf-method"><span class="dotm"></span>Geofence — site &amp; customer visits</div>
+          <div class="wf-method"><span class="dotm"></span>Kiosk — workers without smartphones</div>
+        </div>
+      </div>
+      <div class="twin-card reveal reveal-delay-2">
+        <div class="twin-head">
+          <span class="name">M-102 · Cutting Machine</span>
+          <span class="twin-status"><span class="pulse"></span>RUNNING</span>
+        </div>
+        <div class="twin-body">
+          <div class="twin-row"><div class="k">Work order</div><div class="v">TZ-1821</div></div>
+          <div class="twin-row"><div class="k">Completed / target</div><div class="v">5,482 / 8,000</div></div>
+          <div class="twin-row"><div class="k">Cycle time</div><div class="v">3.4 sec</div></div>
+          <div class="twin-row"><div class="k">Energy today</div><div class="v">68 kWh</div></div>
+          <div class="twin-row"><div class="k">Reject</div><div class="v">121 units</div></div>
+          <div class="twin-row"><div class="k">Next maintenance</div><div class="v">84 hrs</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRANZOOP VISION -->
+<section class="sect" id="vision">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Tranzoop Vision · Physical Business Intelligence</div>
+      <h2>Turn cameras, access points and sensors into evidence — not footage.</h2>
+      <p>Tranzoop Vision doesn't operate as a standalone CCTV analytics product. It connects CCTV, access control, QR/NFC/RFID, workforce, machines, IoT, utilities, vehicles and inventory into one loop: Detect → Correlate → Audit → Quantify → Recommend → Act.</p>
+    </div>
+
+    <div class="reveal">
+      <div class="eyebrow" style="margin-bottom:16px;">Privacy-by-design vision modes</div>
+      <div class="vision-modes">
+        <div class="vmode reveal reveal-delay-1">
+          <div class="vn">Mode 1</div>
+          <h5>Anonymous Vision</h5>
+          <p>People / vehicle / object detection — no identity involved.</p>
+        </div>
+        <div class="vmode reveal reveal-delay-2">
+          <div class="vn">Mode 2</div>
+          <h5>Operational Correlation</h5>
+          <p>Vision + zones + work orders + access events.</p>
+        </div>
+        <div class="vmode reveal reveal-delay-3">
+          <div class="vn">Mode 3</div>
+          <h5>Identity-Assisted</h5>
+          <p>Authorised identity signals — app, QR, NFC, card — where necessary.</p>
+        </div>
+        <div class="vmode locked reveal reveal-delay-4">
+          <div class="vn">Mode 4</div>
+          <h5>Biometric Identification</h5>
+          <p>Optional facial recognition, only where justified, secured and legally appropriate.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:56px;" class="reveal">
+      <div class="eyebrow" style="margin-bottom:16px;">Continuous audit workflow</div>
+      <div class="audit-flow">
+        <div class="audit-step"><div class="dotc">01</div><span class="lab">Detected</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">02</div><span class="lab">AI Correlates</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">03</div><span class="lab">Finding Created</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">04</div><span class="lab">Person Assigned</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">05</div><span class="lab">Corrective Action</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">06</div><span class="lab">Evidence Uploaded</span></div>
+        <div class="audit-arrow">→</div>
+        <div class="audit-step"><div class="dotc">07</div><span class="lab">Verified &amp; Closed</span></div>
+      </div>
+    </div>
+
+    <div class="vision-split">
+      <div class="score-panel reveal reveal-delay-1">
+        <h4>Property Intelligence Score</h4>
+        <div class="score-row"><span class="slabel">Security</span><div class="score-track"><div class="score-fill" data-pct="91"></div></div><span class="sval mono">91</span></div>
+        <div class="score-row"><span class="slabel">Safety</span><div class="score-track"><div class="score-fill" data-pct="84"></div></div><span class="sval mono">84</span></div>
+        <div class="score-row"><span class="slabel">Operations</span><div class="score-track"><div class="score-fill" data-pct="78"></div></div><span class="sval mono">78</span></div>
+        <div class="score-row"><span class="slabel">Energy</span><div class="score-track"><div class="score-fill" data-pct="67"></div></div><span class="sval mono">67</span></div>
+        <div class="score-row"><span class="slabel">Maintenance</span><div class="score-track"><div class="score-fill" data-pct="88"></div></div><span class="sval mono">88</span></div>
+        <div class="score-row"><span class="slabel">Compliance</span><div class="score-track"><div class="score-fill" data-pct="95"></div></div><span class="sval mono">95</span></div>
+      </div>
+      <div class="evidence-card reveal reveal-delay-2">
+        <div class="evidence-head">
+          <span class="et">⚠ Cold Storage Finding</span>
+          <span class="twin-status" style="background:rgba(255,106,92,0.1); color:var(--red); border-color:rgba(255,106,92,0.3);">Needs review</span>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-line"><span>Door open duration</span><b>14 minutes</b></div>
+          <div class="evidence-line"><span>Temperature excursion</span><b>+6.2°C</b></div>
+          <div class="evidence-line"><span>Energy vs. baseline</span><b>+18%</b></div>
+          <div class="evidence-line" style="border-bottom:none; padding-bottom:0;"><span>Location</span><b>Cold Store · Camera 04</b></div>
+          <div class="evidence-impact">Correlated door + temperature + energy signals → <b>estimated impact ₹3,100</b> in at-risk stock and excess energy. Corrective action assigned, evidence attached.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS GRAPH -->
+<section class="sect" style="background:var(--ink-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">The Tranzoop Business Graph</div>
+      <h2>Every rupee, traced back to its cause.</h2>
+      <p>Employee, work order, process, machine, material, customer, vendor, expense and revenue live on one connected graph — the foundation Tranzoop's AI uses to explain not just what happened, but why it affected profit.</p>
+    </div>
+    <div class="graph-wrap reveal">
+      <svg viewBox="0 0 900 320" width="100%" style="max-width:900px" id="graphSvg">
+        <path class="graph-edge active" d="M90,60 C200,60 220,140 300,140"/>
+        <path class="graph-edge active" d="M300,140 C360,140 380,60 450,60"/>
+        <path class="graph-edge" d="M300,140 C340,190 360,220 430,240"/>
+        <path class="graph-edge active" d="M430,240 C500,260 540,220 600,180"/>
+        <path class="graph-edge active" d="M450,60 C520,60 550,120 600,180"/>
+        <path class="graph-edge" d="M600,180 C640,150 660,110 700,90"/>
+        <path class="graph-edge active" d="M600,180 C660,210 700,230 780,250"/>
+        <path class="graph-edge" d="M90,60 C90,140 130,200 200,240"/>
+        <path class="graph-edge" d="M200,240 C260,270 330,270 430,240"/>
+        <g>
+          <circle class="graph-node" cx="60" cy="60" r="30"/>
+          <text class="graph-node-text" x="60" y="64" text-anchor="middle">Employee</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="300" cy="140" r="34"/>
+          <text class="graph-node-text" x="300" y="144" text-anchor="middle">Work Order</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="450" cy="60" r="30"/>
+          <text class="graph-node-text" x="450" y="64" text-anchor="middle">Machine</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="200" cy="240" r="30"/>
+          <text class="graph-node-text" x="200" y="244" text-anchor="middle">Material</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="430" cy="240" r="30"/>
+          <text class="graph-node-text" x="430" y="244" text-anchor="middle">Customer</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="700" cy="90" r="30"/>
+          <text class="graph-node-text" x="700" y="94" text-anchor="middle">Vendor</text>
+        </g>
+        <g>
+          <circle class="graph-node" cx="600" cy="180" r="32"/>
+          <text class="graph-node-text" x="600" y="184" text-anchor="middle">Revenue</text>
+        </g>
+        <g class="graph-profit">
+          <circle cx="800" cy="250" r="38"/>
+          <text x="800" y="254" text-anchor="middle" font-family="Space Grotesk" font-size="13" font-weight="700">PROFIT</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sect" id="pricing">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Pricing</div>
+      <h2>Priced by operational value, not feature count.</h2>
+      <p>Start with a public platform tier, then let your industry configure the final package. Annual billing runs 15–20% lower than monthly.</p>
+    </div>
+    <div class="pricing-tabs reveal">
+      <button class="pricing-tab active" data-tab="platform">Platform plans</button>
+      <button class="pricing-tab" data-tab="industry">Industry pricing</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-platform">
+      <div class="pricing-grid">
+        <div class="price-card reveal reveal-delay-1">
+          <div class="tier">Start</div>
+          <div class="amt">₹999<span>/mo</span></div>
+          <div class="pos">Run your business digitally. Single site, core capture.</div>
+        </div>
+        <div class="price-card reveal reveal-delay-2">
+          <div class="tier">Grow</div>
+          <div class="amt">₹2,999<span>/mo</span></div>
+          <div class="pos">Connect teams, work, customers and money.</div>
+        </div>
+        <div class="price-card feat reveal reveal-delay-3">
+          <div class="tier">Pro</div>
+          <div class="amt">₹7,999<span>/mo</span></div>
+          <div class="pos">Advanced operations + profitability intelligence.</div>
+        </div>
+        <div class="price-card reveal reveal-delay-4">
+          <div class="tier">Intelligence</div>
+          <div class="amt">₹14,999<span>/mo</span></div>
+          <div class="pos">AI-powered business optimisation and cost leakage.</div>
+        </div>
+        <div class="price-card reveal reveal-delay-4">
+          <div class="tier">Enterprise</div>
+          <div class="amt">Custom</div>
+          <div class="pos">Multi-location, machines, IoT, integrations and AI agents.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-industry">
+      <div class="industry-price-grid">
+        <div class="iprice-row reveal"><div class="in">Seafood</div><div class="ip">₹7,999 – ₹60,000+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Transport</div><div class="ip">₹2,999 – ₹1,00,000+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Motor Workshop</div><div class="ip">₹1,999 – ₹12,999+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Tailor</div><div class="ip">₹799 – ₹5,999+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Tyre Shop</div><div class="ip">₹1,499 – ₹9,999+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Event Hall</div><div class="ip">₹1,999 – ₹12,999+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">Creative Agency</div><div class="ip">₹1,999 – ₹15,000+/mo</div></div>
+        <div class="iprice-row reveal"><div class="in">AI Pro / Autopilot</div><div class="ip">+₹2,999 – ₹15,000/mo</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADOPTION LADDER -->
+<section class="sect" id="roadmap" style="background:var(--ink-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);">
+  <div class="wrap">
+    <div class="sect-head reveal">
+      <div class="eyebrow">Adoption Ladder</div>
+      <h2>Start cheap. Grow into a connected operation.</h2>
+      <p>A micro business can begin with software alone. A large manufacturer can grow, at its own pace, into a fully connected, predictive operation.</p>
+    </div>
+    <div class="ladder reveal">
+      <div class="ladder-step on"><div class="n">01</div><h5>Software</h5><p>Core records, replacing paper &amp; Excel.</p></div>
+      <div class="ladder-step on"><div class="n">02</div><h5>AI Copilot</h5><p>Speak, type or scan to update.</p></div>
+      <div class="ladder-step on"><div class="n">03</div><h5>WhatsApp / Email Sync</h5><p>Update from channels already in use.</p></div>
+      <div class="ladder-step"><div class="n">04</div><h5>Digital Tracking</h5><p>QR, NFC, geofence for workforce.</p></div>
+      <div class="ladder-step"><div class="n">05</div><h5>IoT</h5><p>Machines, energy, sensors, PLCs.</p></div>
+      <div class="ladder-step"><div class="n">06</div><h5>Vision</h5><p>Computer-vision quality &amp; safety.</p></div>
+      <div class="ladder-step"><div class="n">07</div><h5>Automation</h5><p>Approved workflows execute themselves.</p></div>
+      <div class="ladder-step"><div class="n">08</div><h5>Robotics</h5><p>AMR, cobots &amp; orchestrated cells.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sect" id="faq">
+  <div class="wrap">
+    <div class="faq-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item open">
+        <button class="faq-question" aria-expanded="true">
+          <span>Is Tranzoop one product or a platform of industry packs?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer-wrap"><div class="faq-answer-inner">
+          <p class="faq-answer">Tranzoop runs on one Core platform — CRM, employees, work orders, inventory, procurement, invoicing, P&amp;L and AI. Industry Packs like Seafood, Transport, Motor Workshop, Tailor, Tyre and Event Hall add the workflow logic each trade actually runs on, all under one company account, one login and one invoice.</p>
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span>Can I activate more than one Industry Pack?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer-wrap"><div class="faq-answer-inner">
+          <p class="faq-answer">Yes. A transport business running its own workshop bay, for example, can run the Transport and Motor Workshop packs side by side on the same Core. Each pack is priced separately and billed together on one invoice.</p>
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span>How does pricing and billing work?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer-wrap"><div class="faq-answer-inner">
+          <p class="faq-answer">Pricing combines a Platform Subscription, your Industry Pack, scale (users, branches, vehicles or machines) and optional AI or IoT add-ons. Plans start from ₹999/month, billed monthly or annually — annual billing runs 15–20% lower.</p>
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span>Do you offer implementation and onboarding support?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer-wrap"><div class="faq-answer-inner">
+          <p class="faq-answer">Yes. Onboarding is conversational — Tranzoop asks what you make or sell, your locations, employees and machines, then proposes a starting setup. Implementation support ranges from ₹0–₹10,000 for small SaaS customers up to ₹75,000–₹3,00,000+ for manufacturing and processing businesses, covering workflow mapping, migration and training.</p>
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">
+          <span>Can I cancel or change my plan at any time?</span>
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer-wrap"><div class="faq-answer-inner">
+          <p class="faq-answer">Yes. You can move between Start, Grow, Pro, Intelligence and Enterprise tiers, or add and remove Industry Packs, as your operations change — Tranzoop is built as a land-and-expand ladder, not a locked-in contract.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NORTH STAR CTA -->
+<section class="northstar" id="cta">
+  <div class="wrap">
+    <div class="eyebrow reveal">North Star Metric</div>
+    <h2 class="reveal reveal-delay-1"><span class="amt">₹ Value improved</span> by Tranzoop — not logins.</h2>
+    <p class="reveal reveal-delay-2">Employees update the business from wherever work already happens. Tranzoop synchronises it into one trusted operational truth, connects it to cost and P&amp;L, and tells you what needs attention next.</p>
+    <div class="hero-actions reveal reveal-delay-3">
+      <a href="#" class="btn btn-primary">Book a demo →</a>
+      <a href="#" class="btn btn-ghost">Talk to sales</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="dot"></span>TRANZOOP</div>
+        <p>An AI Business Operating System that connects People, Work, Machines, Materials and Money — updated from the app, WhatsApp, email, QR, voice, documents, location and IoT.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#product">Business Graph</a>
+        <a href="#copilot">Copilot</a>
+        <a href="#">Cost Leakage Engine</a>
+        <a href="#">Workforce &amp; IoT</a>
+        <a href="#vision">Tranzoop Vision</a>
+      </div>
+      <div class="foot-col">
+        <h5>Industries</h5>
+        <a href="#industries">Seafood</a>
+        <a href="#industries">Transport</a>
+        <a href="#industries">Motor Workshop</a>
+        <a href="#industries">Tailor</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#pricing">Pricing</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#">Partners</a>
+        <a href="#cta">Book a demo</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Tranzoop. Built for businesses that run on real work, not paperwork.</span>
+      <span class="mono">PEOPLE · MACHINES · MATERIALS · MONEY</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ---------- Mobile nav ----------
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+// ---------- Scroll reveal ----------
+const revealEls = document.querySelectorAll('.reveal:not(.in)');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold:0.14 });
+revealEls.forEach(el => io.observe(el));
+
+// ---------- Leakage bars animate on view ----------
+const bars = document.querySelectorAll('.leak-bar-row');
+const barIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const fill = e.target.querySelector('.leak-bar-fill');
+      fill.style.width = e.target.dataset.pct + '%';
+      barIo.unobserve(e.target);
+    }
+  });
+}, { threshold:0.4 });
+bars.forEach(b => barIo.observe(b));
+
+// ---------- Property score bars animate on view ----------
+const scoreFills = document.querySelectorAll('.score-fill');
+const scoreIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.style.width = e.target.dataset.pct + '%';
+      scoreIo.unobserve(e.target);
+    }
+  });
+}, { threshold:0.4 });
+scoreFills.forEach(f => scoreIo.observe(f));
+
+// ---------- FAQ accordion ----------
+document.querySelectorAll('.faq-item').forEach(item => {
+  const btn = item.querySelector('.faq-question');
+  btn.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(openItem => {
+      openItem.classList.remove('open');
+      openItem.querySelector('.faq-question').setAttribute('aria-expanded','false');
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
+
+// ---------- Pricing tabs ----------
+document.querySelectorAll('.pricing-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.pricing-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- CURSOR GLOW ---------------- */
+const glow = document.getElementById("cursorGlow");
+window.addEventListener("pointermove", (e)=>{
+  glow.style.left = e.clientX + "px";
+  glow.style.top = e.clientY + "px";
+});
+
+/* ---------------- COPILOT VIDEO: fix the "splash"/broken playback ----------------
+   - Fade the video in only once it actually has a frame ready (canplay), instead of
+     showing a black box / flash while the source is still loading.
+   - Force play() defensively: some browsers (notably Chrome with autoplay policies)
+     silently reject the initial autoplay attempt, which is the "video breaking"/stalling
+     you were seeing. We retry play() on canplay and on user interaction as a fallback.
+   - loop + playsinline + muted are set in the markup so it behaves as a silent, looping
+     background demo instead of stopping/restarting abruptly.
+*/
+const copilotVideo = document.getElementById('copilotVideo');
+if (copilotVideo) {
+  const revealVideo = () => copilotVideo.classList.add('loaded');
+  copilotVideo.addEventListener('canplay', revealVideo, { once:true });
+  copilotVideo.addEventListener('loadeddata', revealVideo, { once:true });
+
+  const tryPlay = () => {
+    const p = copilotVideo.play();
+    if (p !== undefined) {
+      p.catch(() => {
+        // Autoplay was blocked — retry once the user interacts with the page.
+        const retry = () => { copilotVideo.play().catch(()=>{}); document.removeEventListener('click', retry); };
+        document.addEventListener('click', retry, { once:true });
+      });
+    }
+  };
+  if (copilotVideo.readyState >= 2) { revealVideo(); tryPlay(); }
+  else { copilotVideo.addEventListener('loadedmetadata', tryPlay, { once:true }); }
+}
+
+// ---------- Hero console typing sequence ----------
+const scenarios = [
+  {
+    who: 'Registered WhatsApp · Supervisor',
+    text: 'Morning shift M4 production 4,850. Reject 92. Stopped 35 mins waiting material.',
+    fields: [['Machine','M4'],['Production','4,850'],['Reject','92'],['Downtime','35 min'],['Reason','Waiting for material']],
+    event: '✓ PRODUCTION_RECORDED · DOWNTIME_REASON_ADDED'
+  },
+  {
+    who: 'Voice note · Owner',
+    text: 'Customer ABC paid ₹25,000 by UPI.',
+    fields: [['Customer','ABC'],['Amount','₹25,000'],['Mode','UPI'],['Type','Draft receipt']],
+    event: '✓ PAYMENT_RECEIVED'
+  },
+  {
+    who: 'Typed update · Technician',
+    text: 'Bearing changed on Machine 7; cost ₹4,800.',
+    fields: [['Machine','M7'],['Work','Bearing change'],['Cost','₹4,800'],['Type','Maintenance + Expense']],
+    event: '✓ MAINTENANCE_REPORTED · EXPENSE_RECORDED'
+  },
+  {
+    who: 'Mixed-language · Operator',
+    text: 'Machine 4-la today 1,250 pieces production. 32 reject. Two hours current problem nala machine stop.',
+    fields: [['Machine','M4'],['Production','1,250'],['Reject','32'],['Downtime','2 hrs'],['Reason','Power issue']],
+    event: '✓ PRODUCTION_RECORDED · MACHINE_STOPPED'
+  }
+];
+
+const consoleBody = document.getElementById('consoleBody');
+let sIndex = 0;
+
+function typeText(el, text, speed, cb){
+  let i = 0;
+  el.textContent = '';
+  el.classList.add('console-typing');
+  const timer = setInterval(() => {
+    el.textContent = text.slice(0, i+1);
+    i++;
+    if(i >= text.length){
+      clearInterval(timer);
+      el.classList.remove('console-typing');
+      if(cb) cb();
+    }
+  }, speed);
+}
+
+function runScenario(){
+  const s = scenarios[sIndex % scenarios.length];
+  consoleBody.innerHTML = '';
+
+  const msg = document.createElement('div');
+  msg.className = 'console-msg';
+  const whoEl = document.createElement('span');
+  whoEl.className = 'who';
+  whoEl.textContent = s.who;
+  const textEl = document.createElement('span');
+  msg.appendChild(whoEl);
+  msg.appendChild(textEl);
+  consoleBody.appendChild(msg);
+
+  typeText(textEl, s.text, 22, () => {
+    setTimeout(() => {
+      const fields = document.createElement('div');
+      fields.className = 'console-fields';
+      s.fields.forEach(([k,v]) => {
+        const f = document.createElement('div');
+        f.className = 'f';
+        f.innerHTML = '<span class="k">'+k+'</span><span class="v">'+v+'</span>';
+        fields.appendChild(f);
+      });
+      consoleBody.appendChild(fields);
+      requestAnimationFrame(() => fields.classList.add('show'));
+
+      setTimeout(() => {
+        const ev = document.createElement('div');
+        ev.className = 'console-event';
+        ev.textContent = s.event;
+        consoleBody.appendChild(ev);
+        requestAnimationFrame(() => ev.classList.add('show'));
+
+        sIndex++;
+        setTimeout(runScenario, 3200);
+      }, 500);
+    }, 350);
+  });
+}
+runScenario();
+</script>
+</body>
+</html>

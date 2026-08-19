@@ -1,7 +1,10 @@
 import React from "react";
 import "../../assets/styles/landingPage.css";
+import { useNavigate } from "react-router-dom";
 
 const FooterSection = () => {
+  const navigate = useNavigate();
+  
   return (
     <footer className="footer-section">
       <section className="footer-cta container">
@@ -28,9 +31,7 @@ const FooterSection = () => {
 
             <button
               className="footer-secondary-btn"
-              onClick={() => {
-                window.location.href = "#bos";
-              }}
+              onClick={() => navigate('/products')}
             >
               Explore BOS
               <span>↗</span>
@@ -81,7 +82,7 @@ const FooterSection = () => {
         <div className="footer-bottom">
           <div className="footer-bottom-container container">
             <span className="footer-copyright">
-              Developed by Jr Pixelz Private Limited
+              © 2026 Jr Pixelz Pvt Limited. All rights reserved.
             </span>
             <span className="footer-version">
               TRANZOOP · BUSINESS OPERATING SYSTEM

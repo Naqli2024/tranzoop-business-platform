@@ -47,6 +47,7 @@
 
   --color-accent: #f9a825;
   --color-dark-accent: #d88900;
+  --color-accent-shadow: rgba(249, 168, 37, 0.22);
 
   --color-surface: #111827;
   --color-surface-soft: #172235;
@@ -72,6 +73,7 @@
 
   --color-accent: #f9a825;
   --color-dark-accent: #d88900;
+  --color-accent-shadow: rgba(249, 168, 37, 0.16);
 
   --color-surface: #ffffff;
   --color-surface-soft: #f7f8fa;

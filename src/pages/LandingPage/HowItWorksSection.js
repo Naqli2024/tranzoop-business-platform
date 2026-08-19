@@ -46,7 +46,7 @@ const steps = [
  
 const HowItWorks = () => {
   return (
-    <section className="service-how-it-works">
+    <section className="service-how-it-works" id="how-it-works">
       <div className="service-how-container container py-5">
         <div className="service-how-header">
           <div className="service-how-eyebrow">

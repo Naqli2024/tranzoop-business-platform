@@ -8,7 +8,6 @@ const JoinTranzoop = () => {
           <p className="join-eyebrow">
             TWO CATEGORIES, TWO WAYS TO JOIN
           </p>
- 
           <h1>
             WHICH SIDE OF TRANZOOP ARE YOU ON?
           </h1>
@@ -46,7 +45,7 @@ const JoinTranzoop = () => {
           <div className="join-card">
             <div className="card-content">
  
-              <span className="card-label">
+              <span className="card-label bos-head">
                 BOS
               </span>
  

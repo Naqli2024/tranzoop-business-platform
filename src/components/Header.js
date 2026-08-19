@@ -54,16 +54,16 @@ const Header = () => {
           TRANZOOP
         </a>
         <nav className="header-nav">
-          <a href="#home" onClick={()=> navigate('/')} className={location.pathname === "/" ? "header-nav-active" : ""}>Home</a>
+          <a onClick={()=> navigate('/')} className={location.pathname === "/" ? "header-nav-active" : ""}>Home</a>
           <a href="#services">Service Booking</a>
-          <a href="#bos">BOS</a>
+          <a onClick={()=> navigate('/products')} className={location.pathname === "/products" ? "header-nav-active" : ""}>BOS</a>
           <a href="#how-it-works">How it works</a>
-          <a href="#providers">For providers</a>
+          <a href="#services">For providers</a>
         </nav>
         <div className="header-actions">
-          <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} onClick={()=> navigate('/login')}>
+          {/* <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} onClick={()=> navigate('/login')}>
             Log in
-          </button>
+          </button> */}
           <ThemeToggle />
           <button className="header-start-btn" onClick={()=> navigate('/login')}>
             Get started
@@ -103,10 +103,10 @@ const Header = () => {
           </a>
         </nav>
         <div className="header-mobile-actions">
-          <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} 
+          {/* <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} 
           onClick={()=> navigate('/login')}>
             Log in
-          </button>
+          </button> */}
           <button className="header-start-btn" onClick={()=> navigate('/login')}>
             Get started
           </button>

@@ -5,6 +5,7 @@ import truckImg from "../../assets/images/truck.png";
 import { BsTruck } from "react-icons/bs";
 import { MdOutlineDashboard } from "react-icons/md";
 import CardsSection from "./CardsSection";
+import { useNavigate } from "react-router-dom";
 
 const serviceCards = [
   
@@ -104,6 +105,8 @@ const SkylineLayer = ({ layer }) => {
   );
 };
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="hero-section">
       <div className="hero-main">
@@ -152,7 +155,7 @@ const HeroSection = () => {
               <BsTruck size={18}/>Book a service
             </button>
 
-            <button className="hero-secondary-btn">
+            <button className="hero-secondary-btn" onClick={()=>navigate('/products')}>
               <MdOutlineDashboard size={18}/>Explore BOS
             </button>
           </div>

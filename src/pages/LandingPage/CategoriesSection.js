@@ -20,6 +20,7 @@ import {
   Users,
   Package,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const serviceItems = [
   {
@@ -163,8 +164,10 @@ function BosGrid() {
 }
 
 function CategoriesSection() {
+  const navigate = useNavigate();
+
   return (
-    <section className="marketplace-section py-5">
+    <section className="marketplace-section py-5" id="services">
       <div className="marketplace-container container">
         <div className="marketplace-header">
           <div className="marketplace-eyebrow">
@@ -242,7 +245,7 @@ function CategoriesSection() {
               </span>
             </div>
             <div className="card-footer bos-footer">
-              <button className="bos-action">
+              <button className="bos-action" onClick={()=> navigate('/products')}>
                 Explore BOS Solutions →
               </button>
             </div>
