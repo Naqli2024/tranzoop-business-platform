@@ -1,95 +1,97 @@
 import {
   RiDashboardLine,
-  RiGroupLine,
+  RiBuilding2Line,
   RiUser3Line,
-  RiTruckLine,
-  RiShoppingCartLine,
-  RiShoppingBasketLine,
-  RiFlaskLine,
-  RiArchiveLine,
-  RiInboxArchiveLine,
-  RiShipLine,
-  RiBox3Line,
-  RiMapPinLine,
-  RiWallet3Line,
-  RiReceiptLine,
-  RiLineChartLine,
+  RiApps2Line,
+  RiPriceTag3Line,
+  RiBankCardLine,
+  RiFileList3Line,
+  RiDatabase2Line,
+  RiPlug2Line,
+  RiCodeSSlashLine,
+  RiBarChartBoxLine,
+  RiSettings3Line,
+  RiShieldUserLine,
+  RiLogoutBoxRLine
 } from "react-icons/ri";
 
-export const seaFoodItems = [
+export const sidebarData = [
   {
-    path: "dashboard",
-    icon: <RiDashboardLine size={15} />,
+    id: "dashboard",
     label: "Dashboard",
+    path: "/admin",
+    icon: RiDashboardLine,
+  },
+
+  {
+    id: "businesses",
+    label: "Businesses",
+    path: "/admin/businesses",
+    icon: RiBuilding2Line,
+  },
+
+  {
+    id: "erps",
+    label: "ERP Management",
+    path: "/admin/erp-management",
+    icon: RiApps2Line,
+  },
+
+  {
+    id: "pricing",
+    label: "Pricing & Plans",
+    path: "/admin/plans-pricing",
+    icon: RiPriceTag3Line,
+  },
+
+  {
+    id: "subscriptions",
+    label: "Subscriptions",
+    path: "/admin/subscriptions",
+    icon: RiFileList3Line,
   },
   {
-    path: "pos",
-    icon: <RiShoppingCartLine size={15} />,
-    label: "POS",
+    id: "api",
+    label: "API Usage",
+    path: "/admin/api-usage",
+    icon: RiCodeSSlashLine,
   },
   {
-    path: "customers",
-    icon: <RiGroupLine size={15} />,
-    label: "Customers",
-  },
+    id: "billing",
+    label: "Billing & Payments",
+    icon: RiBankCardLine,
+    children: [
+      {
+        id: "payments",
+        label: "Payments",
+        path: "/admin/payments",
+      },
+      {
+        id: "invoices",
+        label: "Invoices",
+        path: "/admin/invoices",
+      },
+      {
+        id: "transactions",
+        label: "Transactions",
+        path: "/admin/transactions",
+      },
+    ],
+  }
+];
+
+export const sidebarBottomData = [
   {
-    path: "suppliers",
-    icon: <RiUser3Line size={15} />,
-    label: "Suppliers",
+    id: "profile",
+    label: "Admin Profile",
+    path: "/admin/profile",
+    icon: RiUser3Line,
   },
+
   {
-    path: "transporters",
-    icon: <RiTruckLine size={15} />,
-    label: "Transporters",
-  },
-  {
-    path: "purchase",
-    icon: <RiShoppingBasketLine size={15} />,
-    label: "Purchase",
-  },
-  {
-    path: "sales",
-    icon: <RiShoppingCartLine size={15} />,
-    label: "Sales",
-  },
-  {
-    path: "qc-inspection",
-    icon: <RiFlaskLine size={15} />,
-    label: "QC",
-  },
-  {
-    path: "inventory",
-    icon: <RiArchiveLine size={15} />,
-    label: "Inventory",
-  },
-  {
-    path: "packing",
-    icon: <RiBox3Line size={15} />,
-    label: "Packing",
-  },
-  {
-    path: "shipments",
-    icon: <RiShipLine size={15} />,
-    label: "Shipments",
-  },
-  {
-    path: "tracking",
-    icon: <RiMapPinLine size={15} />,
-    label: "Tracking",
-  },
-  {
-    path: "payments",
-    icon: <RiWallet3Line size={15} />,
-    label: "Payments",
-  },
-  {
-    path: "invoices",
-    icon: <RiReceiptLine size={15} />,
-    label: "Invoices",
-  },
-  {
-    path: "ledger",
-    icon: <RiLineChartLine size={15} />,
-    label: "P & L",
+    id: "logout",
+    label: "Logout",
+    action: "logout",
+    icon: RiLogoutBoxRLine,
   },
 ];

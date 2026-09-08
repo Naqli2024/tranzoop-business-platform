@@ -155,57 +155,56 @@ const HeroSection = () => {
               <BsTruck size={18}/>Book a service
             </button>
 
-            <button className="hero-secondary-btn" onClick={()=>navigate('/products')}>
+            <button className="hero-secondary-btn" onClick={()=>navigate('/our-products')}>
               <MdOutlineDashboard size={18}/>Explore BOS
             </button>
           </div>
         </div>
         <div className="hero-visual">
+          <div className="hero-cards-wrapper">
+            <CardsSection
+              randomRotation
+              sensitivity={300}
+              sendToBackOnClick={false}
+              cards={serviceCards.map((service, i) => (
+                <div className="hero-service-card" key={i}>
+                  <div className="hero-service-card-top">
+                    <span className="hero-service-category">
+                      {service.category}
+                    </span>
 
-<div className="hero-cards-wrapper">
-  <CardsSection
-    randomRotation
-    sensitivity={300}
-    sendToBackOnClick={false}
-    cards={serviceCards.map((service, i) => (
-      <div className="hero-service-card" key={i}>
-        <div className="hero-service-card-top">
-          <span className="hero-service-category">
-            {service.category}
-          </span>
+                    <span className="hero-service-number">
+                      0{i + 1}
+                    </span>
+                  </div>
 
-          <span className="hero-service-number">
-            0{i + 1}
-          </span>
-        </div>
+                  <div className="hero-service-icon">
+                    {i === 0 && "🚛"}
+                    {i === 1 && "🏭"}
+                    {i === 2 && "📦"}
+                    {i === 3 && "🏢"}
+                  </div>
 
-        <div className="hero-service-icon">
-          {i === 0 && "🚛"}
-          {i === 1 && "🏭"}
-          {i === 2 && "📦"}
-          {i === 3 && "🏢"}
-        </div>
+                  <h3>{service.title}</h3>
 
-        <h3>{service.title}</h3>
+                  <p>{service.description}</p>
 
-        <p>{service.description}</p>
+                  <div className="hero-service-tags">
+                    {service.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
 
-        <div className="hero-service-tags">
-          {service.tags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
-        </div>
-
-        <div className="hero-service-link">
-          Explore service <span>↗</span>
-        </div>
-      </div>
-    ))}
-    autoplay
-    autoplayDelay={2000}
-    pauseOnHover
-  />
-</div>
+                  <div className="hero-service-link">
+                    Explore service <span>↗</span>
+                  </div>
+                </div>
+              ))}
+              autoplay
+              autoplayDelay={2000}
+              pauseOnHover
+            />
+          </div>
         </div>
       </div>
       </div>

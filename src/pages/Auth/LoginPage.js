@@ -4,12 +4,11 @@ import loginImage from "../../assets/images/login.jpeg";
 import "../../assets/styles/auth.css";
 import { VscEye } from "react-icons/vsc";
 import { VscEyeClosed } from "react-icons/vsc";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const { theme } = useContext(ThemeContext);
-
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -122,6 +121,7 @@ const LoginPage = () => {
             <button
               type="submit"
               className="login-submit"
+              onClick={()=> navigate('/admin')}
             >
                 Sign in
             </button>
@@ -134,6 +134,7 @@ const LoginPage = () => {
 
             <button
               type="button"
+              onClick={()=> navigate('/our-products')}
             >
               Create account
             </button>

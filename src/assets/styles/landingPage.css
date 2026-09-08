@@ -44,7 +44,7 @@
   --transition-normal: 280ms ease;
   --transition-slow: 400ms ease;
 
-    /* =========================================================
+  /* =========================================================
      DARK COLORS
   ========================================================= */
   --color-primary: #0b1220;
@@ -177,6 +177,136 @@
   }
 }
 /* =============================================CARDS ANIMATION========================================================= */
+.stack-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.swipe-stamp {
+  position: absolute;
+  top: 22px;
+  z-index: 5;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+
+  border-radius: var(--radius-sm);
+  border: 2px solid currentColor;
+
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  pointer-events: none;
+  user-select: none;
+
+  transform: rotate(-8deg);
+}
+
+.swipe-stamp-accept {
+  left: 22px;
+  color: var(--color-success);
+  background: var(--color-surface);
+  transform: rotate(-8deg);
+}
+
+.swipe-stamp-reject {
+  right: 22px;
+  color: var(--color-dark-accent);
+  background: var(--color-surface);
+  transform: rotate(8deg);
+}
+
+/* ---------- Accept / reject action buttons ---------- */
+
+.stack-actions {
+  position: relative;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.stack-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 24px var(--color-shadow);
+
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.stack-action-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.stack-action-btn-reject:hover {
+  border-color: var(--color-dark-accent);
+  color: var(--color-dark-accent);
+}
+
+.stack-action-btn-accept {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+.stack-action-btn-accept:hover {
+  background: var(--color-dark-accent);
+  border-color: var(--color-dark-accent);
+}
+
+@media (max-width: 600px) {
+  .stack-action-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .swipe-stamp {
+    font-size: 10px;
+    padding: 5px 9px;
+    top: 16px;
+  }
+
+  .swipe-stamp-accept {
+    left: 14px;
+  }
+
+  .swipe-stamp-reject {
+    right: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-action-btn {
+    transition: none;
+  }
+}
 .stack-container {
   position: relative;
   width: 100%;

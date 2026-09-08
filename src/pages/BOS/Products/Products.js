@@ -1,14 +1,14 @@
-import React from "react";
 import "../../../assets/styles/products.css";
 import { useNavigate } from "react-router-dom";
 
 const products = [
   {
     id: 1,
+    slug: "tyre",
     category: "RETAIL OPERATIONS",
     title: "Tyre Shop",
     shortTitle: "TYRE SHOP",
-    path: "https://tranzoop.com/tyreshop/",
+    path: "/pricing",
     description:
       "Manage tyre inventory, purchases, sales, customers, suppliers and service operations from one place.",
     features: [
@@ -21,10 +21,11 @@ const products = [
   },
   {
     id: 2,
+    slug: "tailor",
     category: "BUSINESS OPERATIONS",
     title: "Tailor Shop",
     shortTitle: "TAILOR SHOP",
-    path: "",
+    path: "/pricing",
     description:
       "Manage customers, measurements, orders, fabrics, stitching workflow and delivery with ease.",
     features: [
@@ -37,10 +38,11 @@ const products = [
   },
   {
     id: 3,
+    slug: "transport",
     category: "TRANSPORT OPERATIONS",
     title: "Transport Management",
     shortTitle: "TRANSPORT MANAGEMENT",
-    path: "https://tranzoop.com/transport/",
+    path: "/pricing",
     description:
       "Manage vehicles, drivers, trips, documents, deliveries and transport operations from one platform.",
     features: [
@@ -55,9 +57,12 @@ const products = [
 
 const Products = () => {
   const navigate = useNavigate();
-  
+  const goToPricing = (product) => {
+    navigate(`${product.path}?product=${product.slug}`);
+  };
+
   return (
-    <main className="products-page">
+    <div className="products-page">
       <section className="products-section">
         <div className="products-container">
           <div className="products-header">
@@ -83,7 +88,7 @@ const Products = () => {
                   style={{
                     "--products-delay": `${index * 180}ms`,
                   }}
-                 onClick={() => (window.location.href = product.path)}
+                  onClick={() => goToPricing(product)}
                 >
                   <div className="products-card-top">
                     <span className="products-category">
@@ -116,7 +121,7 @@ const Products = () => {
 
         </div>
       </section>
-    </main>
+    </div>
   );
 };
 

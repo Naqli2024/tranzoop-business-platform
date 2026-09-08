@@ -22,6 +22,33 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [menuOpen]);
 
+    const goToSection = (sectionId) => {
+    closeMenu();
+
+    if (location.pathname === "/") {
+      document.getElementById(sectionId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      navigate(`/#${sectionId}`);
+    }
+  };
+
+  // After navigating to Home, scroll to requested section
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      const sectionId = location.hash.substring(1);
+
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [location]);
+
   const ThemeToggle = () => (
     <div className="dark-light-theme-toggle">
       <div
@@ -48,22 +75,77 @@ const Header = () => {
   );
 
   return (
-    <header className="header-container container">
+    <div className="header-overall-container">
+          <header className="header-container container">
       <div className="header-inner">
         <a href="/" className="header-logo" onClick={closeMenu}>
           TRANZOOP
         </a>
-        <nav className="header-nav">
-          <a onClick={()=> navigate('/')} className={location.pathname === "/" ? "header-nav-active" : ""}>Home</a>
-          <a href="#services">Service Booking</a>
-          <a onClick={()=> navigate('/products')} className={location.pathname === "/products" ? "header-nav-active" : ""}>BOS</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#services">For providers</a>
+       <nav className="header-nav">
+          <a
+            href="/"
+            className={
+              location.pathname === "/" && !location.hash
+                ? "header-nav-active"
+                : ""
+            }
+          >
+            Home
+          </a>
+          <a
+            href="/#services"
+            onClick={(e) => {
+              e.preventDefault();
+              goToSection("services");
+            }}
+            className={
+              location.pathname === "/" && location.hash === "#services"
+                ? "header-nav-active"
+                : ""
+            }
+          >
+            Service Booking
+          </a>
+          <a
+            href="/our-products"
+            className={
+              location.pathname === "/our-products"
+                ? "header-nav-active"
+                : ""
+            }
+          >
+            BOS
+          </a>
+          <a
+            href="/#how-it-works"
+            onClick={(e) => {
+              e.preventDefault();
+              goToSection("how-it-works");
+            }}
+            className={
+              location.pathname === "/" &&
+              location.hash === "#how-it-works"
+                ? "header-nav-active"
+                : ""
+            }
+          >
+            How it works
+          </a>
+          <a
+            href="/pricing"
+            className={
+              location.pathname === "/pricing"
+                ? "header-nav-active"
+                : ""
+            }
+          >
+            Pricing
+          </a>
         </nav>
         <div className="header-actions">
-          {/* <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} onClick={()=> navigate('/login')}>
+          <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} onClick={()=> navigate('/login')}>
             Log in
-          </button> */}
+          </button>
           <ThemeToggle />
           <button className="header-start-btn" onClick={()=> navigate('/login')}>
             Get started
@@ -103,16 +185,17 @@ const Header = () => {
           </a>
         </nav>
         <div className="header-mobile-actions">
-          {/* <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} 
+          <button className={`header-login-btn ${location.pathname === "/login" ? "header-login-active" : ""}`} 
           onClick={()=> navigate('/login')}>
             Log in
-          </button> */}
+          </button>
           <button className="header-start-btn" onClick={()=> navigate('/login')}>
             Get started
           </button>
         </div>
       </div>
     </header>
+    </div>
   );
 };
 

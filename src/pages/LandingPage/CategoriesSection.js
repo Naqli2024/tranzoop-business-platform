@@ -245,7 +245,7 @@ function CategoriesSection() {
               </span>
             </div>
             <div className="card-footer bos-footer">
-              <button className="bos-action" onClick={()=> navigate('/products')}>
+              <button className="bos-action" onClick={()=> navigate('/our-products')}>
                 Explore BOS Solutions →
               </button>
             </div>

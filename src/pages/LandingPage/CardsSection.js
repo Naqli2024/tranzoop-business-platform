@@ -1,18 +1,57 @@
-import { motion, useMotionValue, useTransform } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
+import { FiCheck, FiX } from 'react-icons/fi';
+import '../../assets/styles/landingPage.css';
 
-function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false }) {
+function CardRotate({
+  children,
+  cardId,
+  onSendToBack,
+  sensitivity,
+  disableDrag = false,
+  swipeCommand,
+  onSwiped
+}) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [60, -60]);
-  const rotateY = useTransform(x, [-100, 100], [-60, 60]);
+  const rotate = useTransform(x, [-260, 260], [-16, 16]);
 
-  function handleDragEnd(_, info) {
-    if (Math.abs(info.offset.x) > sensitivity || Math.abs(info.offset.y) > sensitivity) {
+  const likeOpacity = useTransform(x, [24, 160], [0, 1]);
+  const nopeOpacity = useTransform(x, [-160, -24], [1, 0]);
+
+  const flying = useRef(false);
+
+  const flyOut = (direction) => {
+    if (flying.current) return;
+    flying.current = true;
+
+    const targetX = direction === 'right' ? 620 : -620;
+
+    animate(x, targetX, { duration: 0.32, ease: 'easeIn' });
+    animate(y, -30, { duration: 0.32, ease: 'easeIn' });
+
+    setTimeout(() => {
+      onSwiped && onSwiped();
       onSendToBack();
-    } else {
       x.set(0);
       y.set(0);
+      flying.current = false;
+    }, 320);
+  };
+
+  useEffect(() => {
+    if (swipeCommand && swipeCommand.id === cardId) {
+      flyOut(swipeCommand.direction);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swipeCommand]);
+
+  function handleDragEnd(_, info) {
+    if (Math.abs(info.offset.x) > sensitivity) {
+      flyOut(info.offset.x > 0 ? 'right' : 'left');
+    } else {
+      animate(x, 0, { type: 'spring', stiffness: 300, damping: 22 });
+      animate(y, 0, { type: 'spring', stiffness: 300, damping: 22 });
     }
   }
 
@@ -27,13 +66,27 @@ function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false }
   return (
     <motion.div
       className="card-rotate"
-      style={{ x, y, rotateX, rotateY }}
+      style={{ x, y, rotate }}
       drag
       dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
-      dragElastic={0.6}
+      dragElastic={0.7}
       whileTap={{ cursor: 'grabbing' }}
       onDragEnd={handleDragEnd}
     >
+      <motion.span
+        className="swipe-stamp swipe-stamp-accept"
+        style={{ opacity: likeOpacity }}
+        aria-hidden="true"
+      >
+        <FiCheck size={16} /> ACCEPT
+      </motion.span>
+      <motion.span
+        className="swipe-stamp swipe-stamp-reject"
+        style={{ opacity: nopeOpacity }}
+        aria-hidden="true"
+      >
+        <FiX size={16} /> SKIP
+      </motion.span>
       {children}
     </motion.div>
   );
@@ -49,10 +102,12 @@ export default function CardsSection({
   autoplayDelay = 3000,
   pauseOnHover = false,
   mobileClickOnly = false,
-  mobileBreakpoint = 768
+  mobileBreakpoint = 768,
+  showActions = true
 }) {
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [swipeCommand, setSwipeCommand] = useState(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -122,10 +177,11 @@ export default function CardsSection({
     }
   }, [cards]);
 
-  const sendToBack = id => {
-    setStack(prev => {
+  const sendToBack = (id) => {
+    setStack((prev) => {
       const newStack = [...prev];
-      const index = newStack.findIndex(card => card.id === id);
+      const index = newStack.findIndex((card) => card.id === id);
+      if (index === -1) return prev;
       const [card] = newStack.splice(index, 1);
       newStack.unshift(card);
       return newStack;
@@ -133,52 +189,84 @@ export default function CardsSection({
   };
 
   useEffect(() => {
-    if (autoplay && stack.length > 1 && !isPaused) {
+    if (autoplay && stack.length > 1 && !isPaused && !swipeCommand) {
       const interval = setInterval(() => {
         const topCardId = stack[stack.length - 1].id;
-        sendToBack(topCardId);
+        setSwipeCommand({ id: topCardId, direction: 'right' });
       }, autoplayDelay);
 
       return () => clearInterval(interval);
     }
-  }, [autoplay, autoplayDelay, stack, isPaused]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplay, autoplayDelay, stack, isPaused, swipeCommand]);
+
+  const handleManualSwipe = (direction) => {
+    if (!stack.length || swipeCommand) return;
+    const topCardId = stack[stack.length - 1].id;
+    setSwipeCommand({ id: topCardId, direction });
+  };
 
   return (
-    <div
-      className="stack-container"
-      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
-    >
-      {stack.map((card, index) => {
-        const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0;
-        return (
-          <CardRotate
-            key={card.id}
-            onSendToBack={() => sendToBack(card.id)}
-            sensitivity={sensitivity}
-            disableDrag={shouldDisableDrag}
-          >
-            <motion.div
-              className="card"
-              onClick={() => shouldEnableClick && sendToBack(card.id)}
-              animate={{
-                rotateZ: (stack.length - index - 1) * 4 + randomRotate,
-                scale: 1 + index * 0.06 - stack.length * 0.06,
-                transformOrigin: '90% 90%'
-              }}
-              initial={false}
-              transition={{
-                type: 'spring',
-                stiffness: animationConfig.stiffness,
-                damping: animationConfig.damping
-              }}
+    <div className="stack-wrapper">
+      <div
+        className="stack-container"
+        onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+        onMouseLeave={() => pauseOnHover && setIsPaused(false)}
+      >
+        {stack.map((card, index) => {
+          const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0;
+          return (
+            <CardRotate
+              key={card.id}
+              cardId={card.id}
+              onSendToBack={() => sendToBack(card.id)}
+              sensitivity={sensitivity}
+              disableDrag={shouldDisableDrag}
+              swipeCommand={swipeCommand}
+              onSwiped={() => setSwipeCommand(null)}
             >
-              {card.content}
-            </motion.div>
-          </CardRotate>
-        );
-      })}
+              <motion.div
+                className="card"
+                onClick={() => shouldEnableClick && sendToBack(card.id)}
+                animate={{
+                  rotateZ: (stack.length - index - 1) * 4 + randomRotate,
+                  scale: 1 + index * 0.06 - stack.length * 0.06,
+                  transformOrigin: '90% 90%'
+                }}
+                initial={false}
+                transition={{
+                  type: 'spring',
+                  stiffness: animationConfig.stiffness,
+                  damping: animationConfig.damping
+                }}
+              >
+                {card.content}
+              </motion.div>
+            </CardRotate>
+          );
+        })}
+      </div>
+
+      {showActions && (
+        <div className="stack-actions">
+          <button
+            type="button"
+            className="stack-action-btn stack-action-btn-reject"
+            onClick={() => handleManualSwipe('left')}
+            aria-label="Skip"
+          >
+            <FiX size={20} />
+          </button>
+          <button
+            type="button"
+            className="stack-action-btn stack-action-btn-accept"
+            onClick={() => handleManualSwipe('right')}
+            aria-label="Accept"
+          >
+            <FiCheck size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
-

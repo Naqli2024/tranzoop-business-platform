@@ -31,7 +31,7 @@ const FooterSection = () => {
 
             <button
               className="footer-secondary-btn"
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/our-products')}
             >
               Explore BOS
               <span>↗</span>
