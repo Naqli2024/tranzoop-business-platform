@@ -77,7 +77,7 @@ const AdminDashboard = () => {
         <div>
           <h1 className="ad-dashboard-title">Welcome back</h1>
           <p className="ad-dashboard-subtitle">
-            Here's what's happening across the TRANZOOP marketplace today.
+            Here's what's happening across the BIZOOP marketplace today.
           </p>
         </div>
       </header>

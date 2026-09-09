@@ -260,7 +260,7 @@ const PaymentSuccess = () => {
           </p>
 
           <p className="ps-success-description">
-            Thank you for choosing TRANZOOP. Your{" "}
+            Thank you for choosing BIZOOP. Your{" "}
             {product.name} account is ready to use.
             <br />
             You can now start managing your business with

@@ -137,7 +137,7 @@ const CustomerAccount = () => {
             <span className="ca-eyebrow">ACCOUNT SETUP</span>
             <h1>Tell us about your business</h1>
             <p>
-              Create your TRANZOOP account with your business and contact
+              Create your BIZOOP account with your business and contact
               details. This information will be used to set up your organization
               and manage your subscription.
             </p>
@@ -153,7 +153,7 @@ const CustomerAccount = () => {
                   </div>
                   <div>
                     <h2>Business information</h2>
-                    <p>Tell us about the organization using TRANZOOP.</p>
+                    <p>Tell us about the organization using BIZOOP.</p>
                   </div>
                 </div>
                 <button
@@ -265,7 +265,7 @@ const CustomerAccount = () => {
     </div>
 
     <p className="ca-field-hint">
-      Your logo will be used across your TRANZOOP business account.
+      Your logo will be used across your BIZOOP business account.
     </p>
 
   </div>
@@ -567,7 +567,7 @@ const CustomerAccount = () => {
 
                   <div>
                     <h2>Create your account</h2>
-                    <p>Set a secure password for your TRANZOOP account.</p>
+                    <p>Set a secure password for your BIZOOP account.</p>
                   </div>
                 </div>
 
@@ -769,7 +769,7 @@ const CustomerAccount = () => {
                 <strong>Your information is secure</strong>
                 <span>
                   Your account details are protected and used only to provide
-                  your TRANZOOP services.
+                  your BIZOOP services.
                 </span>
               </div>
             </div>

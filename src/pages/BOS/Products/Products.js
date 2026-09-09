@@ -67,7 +67,7 @@ const Products = () => {
         <div className="products-container">
           <div className="products-header">
             <span className="products-eyebrow">
-              TRANZOOP PRODUCTS
+              BIZOOP PRODUCTS
             </span>
             <h1 className="products-title">
               SOFTWARE BUILT FOR YOUR BUSINESS.

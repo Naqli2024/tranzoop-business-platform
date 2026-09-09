@@ -79,7 +79,7 @@ const Header = () => {
           <header className="header-container container">
       <div className="header-inner">
         <a href="/" className="header-logo" onClick={closeMenu}>
-          TRANZOOP
+          BIZOOP
         </a>
        <nav className="header-nav">
           <a
@@ -93,20 +93,6 @@ const Header = () => {
             Home
           </a>
           <a
-            href="/#services"
-            onClick={(e) => {
-              e.preventDefault();
-              goToSection("services");
-            }}
-            className={
-              location.pathname === "/" && location.hash === "#services"
-                ? "header-nav-active"
-                : ""
-            }
-          >
-            Service Booking
-          </a>
-          <a
             href="/our-products"
             className={
               location.pathname === "/our-products"
@@ -114,22 +100,7 @@ const Header = () => {
                 : ""
             }
           >
-            BOS
-          </a>
-          <a
-            href="/#how-it-works"
-            onClick={(e) => {
-              e.preventDefault();
-              goToSection("how-it-works");
-            }}
-            className={
-              location.pathname === "/" &&
-              location.hash === "#how-it-works"
-                ? "header-nav-active"
-                : ""
-            }
-          >
-            How it works
+            Products
           </a>
           <a
             href="/pricing"

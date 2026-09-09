@@ -6,12 +6,10 @@ import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
-    <div>
       <BrowserRouter>
         <AppRoutes />
         <ToastContainer autoClose={2000} />
       </BrowserRouter>
-    </div>
   )
 }
 

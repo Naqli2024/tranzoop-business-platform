@@ -32,7 +32,6 @@ const AdminMain = () => {
     setShowLogoutConfirm(true);
   };
 
-  // Actual logout
   const confirmLogout = () => {
     localStorage.removeItem("adminToken");
 
@@ -57,7 +56,7 @@ const AdminMain = () => {
       >
         <div className="admin-sidebar-header">
           <div className="admin-logo" onClick={() => navigate("/admin")}>
-            <div className="header-logo">TRANZOOP</div>
+            <div className="header-logo">BIZOOP</div>
 
             <div className="admin-logo-subtitle">Marketplace Admin</div>
           </div>
@@ -238,7 +237,7 @@ const AdminMain = () => {
             </button>
 
             <div className="admin-page-context">
-              <span>TRANZOOP</span>
+              <span>BIZOOP</span>
               <strong>Marketplace Admin</strong>
             </div>
           </div>
@@ -287,7 +286,7 @@ const AdminMain = () => {
           <ConfirmDialog
         open={showLogoutConfirm}
         title="Logout?"
-        message="Are you sure you want to logout from the TRANZOOP Marketplace Admin panel?"
+        message="Are you sure you want to logout from the BIZOOP Marketplace Admin panel?"
         confirmLabel="Logout"
         tone="danger"
         onConfirm={confirmLogout}

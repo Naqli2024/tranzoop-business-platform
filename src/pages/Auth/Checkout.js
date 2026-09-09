@@ -81,7 +81,7 @@ const Checkout = () => {
      * Demo coupon.
      * Replace with API validation later.
      */
-    if (normalizedCoupon === "TRANZOOP10") {
+    if (normalizedCoupon === "BIZOOP10") {
       if (price === 0) {
         setCouponMessage("Coupon is not required for the free plan.");
         setCouponApplied(false);
@@ -475,7 +475,7 @@ const Checkout = () => {
 
                 <small>
                   This subscription will be linked to
-                  your TRANZOOP account.
+                  your BIZOOP account.
                 </small>
               </div>
             </div>
@@ -501,7 +501,7 @@ const Checkout = () => {
                 <div>
                   <strong>Account activated</strong>
                   <p>
-                    Your TRANZOOP organization and subscription
+                    Your BIZOOP organization and subscription
                     will be created.
                   </p>
                 </div>

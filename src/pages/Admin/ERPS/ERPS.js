@@ -444,7 +444,7 @@ const Products = () => {
             <div>
               <h1>Products</h1>
 
-              <p>Manage TRANZOOP BOS products and their availability.</p>
+              <p>Manage BIZOOP BOS products and their availability.</p>
             </div>
           </div>
         </div>
