@@ -76,4 +76,3 @@ AuthService.interceptors.response.use(
 );
 
 export default AuthService;
-

@@ -1,43 +1,28 @@
 import React, { useEffect, useState } from "react";
-import {
-  RiCloseLine,
-  RiSaveLine,
-  RiApps2Line,
-} from "react-icons/ri";
+import { RiCloseLine, RiSaveLine, RiApps2Line } from "react-icons/ri";
+import { Loader2 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addErps } from "../../../redux/Auth/ErpsSlice";
+import { toast } from "react-toastify";
 
-const CATEGORY_OPTIONS = [
-  "Transport",
-  "Tyre",
-  "Tailoring",
-  "Retail",
-  "Salon",
-  "Restaurant",
-  "Services",
-  "Manufacturing",
-  "Real Estate",
-];
+const ProductFormModal = ({ open, mode, product = null, onClose, onSave }) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    code: "",
+    description: "",
+    shortDescription: "",
+    icon: "",
+    status: "ACTIVE",
+    isPublic: true,
+    isFeatured: false,
+    displayOrder: 1,
+  });
+  const dispatch = useDispatch();
 
-const PLAN_OPTIONS = ["Free", "Standard", "Premium"];
-
-const EMPTY_FORM = {
-  name: "",
-  slug: "",
-  category: "",
-  description: "",
-  icon: "📦",
-  plans: ["Free", "Standard", "Premium"],
-  status: "Draft",
-};
-
-const ProductFormModal = ({
-  open,
-  mode = "add",
-  product = null,
-  onClose,
-  onSave,
-}) => {
-  const [formData, setFormData] = useState(EMPTY_FORM);
-  const [errors, setErrors] = useState({});
+  // --------------------------------------------------
+  // LOAD FORM
+  // --------------------------------------------------
 
   useEffect(() => {
     if (!open) return;
@@ -45,161 +30,105 @@ const ProductFormModal = ({
     if (mode === "edit" && product) {
       setFormData({
         name: product.name || "",
-        slug: product.slug || "",
-        category: product.category || "",
+        code: product.code || "",
         description: product.description || "",
-        icon: product.icon || "📦",
-        plans: product.plans || [],
-        status: product.status || "Draft",
+        shortDescription: product.shortDescription || "",
+        icon: product.icon || "",
+        status: product.status || "ACTIVE",
+        isPublic:
+          typeof product.isPublic === "boolean" ? product.isPublic : true,
+        isFeatured:
+          typeof product.isFeatured === "boolean" ? product.isFeatured : false,
+        displayOrder: product.displayOrder ?? 1,
       });
     } else {
-      setFormData(EMPTY_FORM);
+      setFormData({
+        name: "",
+        code: "",
+        description: "",
+        shortDescription: "",
+        icon: "",
+        status: "ACTIVE",
+        isPublic: true,
+        isFeatured: false,
+        displayOrder: 1,
+      });
     }
-
-    setErrors({});
   }, [open, mode, product]);
 
   if (!open) return null;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSlugFromName = (value) => {
-    const slug = value
+  const handleCodeChange = (e) => {
+    const value = e.target.value
       .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-_]/g, "");
 
     setFormData((prev) => ({
       ...prev,
-      name: value,
-      slug,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      name: "",
-      slug: "",
+      code: value,
     }));
   };
 
-  const handlePlanToggle = (plan) => {
-    setFormData((prev) => {
-      const exists = prev.plans.includes(plan);
-
-      if (exists) {
-        return {
-          ...prev,
-          plans: prev.plans.filter((item) => item !== plan),
-        };
-      }
-
-      return {
-        ...prev,
-        plans: [...prev.plans, plan],
-      };
-    });
-
-    setErrors((prev) => ({
-      ...prev,
-      plans: "",
-    }));
-  };
-
-  const validate = () => {
-    const nextErrors = {};
-
-    if (!formData.name.trim()) {
-      nextErrors.name = "Product name is required.";
-    }
-
-    if (!formData.slug.trim()) {
-      nextErrors.slug = "Product slug is required.";
-    }
-
-    if (!formData.category) {
-      nextErrors.category = "Please select a category.";
-    }
-
-    if (!formData.description.trim()) {
-      nextErrors.description = "Product description is required.";
-    }
-
-    if (!formData.icon.trim()) {
-      nextErrors.icon = "Product icon is required.";
-    }
-
-    if (!formData.plans.length) {
-      nextErrors.plans = "Select at least one plan.";
-    }
-
-    if (!formData.status) {
-      nextErrors.status = "Please select a status.";
-    }
-
-    setErrors(nextErrors);
-
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) return;
-
-    onSave({
-      ...formData,
+    const payload = {
       name: formData.name.trim(),
-      slug: formData.slug.trim(),
+      code: formData.code.trim().toLowerCase(),
       description: formData.description.trim(),
+      shortDescription: formData.shortDescription.trim(),
       icon: formData.icon.trim(),
-    });
+      status: formData.status,
+      isPublic: formData.isPublic,
+      isFeatured: formData.isFeatured,
+      displayOrder: Number(formData.displayOrder),
+    };
+
+    try {
+      setSubmitting(true);
+
+      if (mode === "add") {
+        const response = await dispatch(addErps(payload)).unwrap();
+        console.log("ERP creation response:", response);
+        toast.success(response?.message);
+      }
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(error?.message || "Failed to create ERP");
+    } finally {
+      setSubmitting(false);
+    }
   };
-
   return (
-    <div
-      className="erp-form-overlay"
-      onMouseDown={onClose}
-    >
-      <div
-        className="erp-form-modal"
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        {/* HEADER */}
-
+    <div className="erp-form-overlay" onMouseDown={onClose}>
+      <div className="erp-form-modal" onMouseDown={(e) => e.stopPropagation()}>
         <div className="erp-form-header">
           <div className="erp-form-heading">
             <div className="erp-form-icon">
               <RiApps2Line />
             </div>
-
             <div>
-              <h2>
-                {mode === "edit"
-                  ? "Edit Product"
-                  : "Add Product"}
-              </h2>
-
+              <h2>{mode === "edit" ? "Edit ERP" : "Add ERP"}</h2>
               <p>
                 {mode === "edit"
-                  ? "Update product information and availability."
-                  : "Create a new BOS product for the marketplace."}
+                  ? "Update ERP information and availability."
+                  : "Create a new ERP for the marketplace."}
               </p>
             </div>
           </div>
-
           <button
             type="button"
             className="erp-form-close"
@@ -209,108 +138,38 @@ const ProductFormModal = ({
             <RiCloseLine />
           </button>
         </div>
-
-        {/* FORM */}
-
-        <form
-          className="erp-form-body"
-          onSubmit={handleSubmit}
-        >
-          {/* PRODUCT INFORMATION */}
-
+        <form className="erp-form-body" onSubmit={handleSubmit}>
           <div className="erp-form-section">
-            <div className="erp-form-section-title">
-              Product Information
-            </div>
-
+            <div className="erp-form-section-title">ERP Information</div>
             <div className="erp-form-grid">
-              {/* NAME */}
-
               <div className="erp-form-field">
                 <label>
-                  Product Name <span>*</span>
+                  ERP Name <span>*</span>
                 </label>
-
                 <input
                   type="text"
                   name="name"
-                  placeholder="e.g. Transport BOS"
+                  placeholder="e.g. Transport ERP"
                   value={formData.name}
-                  onChange={(e) =>
-                    mode === "add"
-                      ? handleSlugFromName(e.target.value)
-                      : handleChange(e)
-                  }
+                  onChange={handleChange}
                 />
-
-                {errors.name && (
-                  <small className="erp-form-error">
-                    {errors.name}
-                  </small>
-                )}
               </div>
-
-              {/* SLUG */}
-
               <div className="erp-form-field">
                 <label>
-                  Product Slug <span>*</span>
+                  ERP Code <span>*</span>
                 </label>
 
                 <input
                   type="text"
-                  name="slug"
-                  placeholder="transport-bos"
-                  value={formData.slug}
-                  onChange={handleChange}
+                  name="code"
+                  placeholder="e.g. transport"
+                  value={formData.code}
+                  onChange={handleCodeChange}
                 />
-
-                {errors.slug && (
-                  <small className="erp-form-error">
-                    {errors.slug}
-                  </small>
-                )}
               </div>
 
-              {/* CATEGORY */}
-
               <div className="erp-form-field">
-                <label>
-                  Category <span>*</span>
-                </label>
-
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                >
-                  <option value="">
-                    Select category
-                  </option>
-
-                  {CATEGORY_OPTIONS.map((category) => (
-                    <option
-                      key={category}
-                      value={category}
-                    >
-                      {category}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.category && (
-                  <small className="erp-form-error">
-                    {errors.category}
-                  </small>
-                )}
-              </div>
-
-              {/* ICON */}
-
-              <div className="erp-form-field">
-                <label>
-                  Product Icon <span>*</span>
-                </label>
+                <label>ERP Icon</label>
 
                 <div className="erp-icon-input">
                   <div className="erp-icon-preview">
@@ -325,152 +184,113 @@ const ProductFormModal = ({
                     onChange={handleChange}
                   />
                 </div>
-
-                {errors.icon && (
-                  <small className="erp-form-error">
-                    {errors.icon}
-                  </small>
-                )}
               </div>
+              <div className="erp-form-field">
+                <label>
+                  Display Order <span>*</span>
+                </label>
 
-              {/* DESCRIPTION */}
+                <select
+                  name="displayOrder"
+                  value={formData.displayOrder}
+                  onChange={handleChange}
+                >
+                  {Array.from({ length: 6 }, (_, index) => index + 1).map(
+                    (order) => (
+                      <option key={order} value={order}>
+                        {order}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </div>
+              <div className="erp-form-field erp-form-field-full">
+                <label>
+                  Short Description <span>*</span>
+                </label>
 
+                <input
+                  type="text"
+                  name="shortDescription"
+                  placeholder="e.g. Manage vehicles, trips, drivers and transport operations."
+                  value={formData.shortDescription}
+                  onChange={handleChange}
+                />
+              </div>
               <div className="erp-form-field erp-form-field-full">
                 <label>
                   Description <span>*</span>
                 </label>
-
                 <textarea
                   name="description"
                   rows="4"
-                  placeholder="Describe what this BOS product provides..."
+                  placeholder="Describe what this ERP provides..."
                   value={formData.description}
                   onChange={handleChange}
                 />
-
-                {errors.description && (
-                  <small className="erp-form-error">
-                    {errors.description}
-                  </small>
-                )}
               </div>
             </div>
           </div>
-
-          {/* PLANS */}
-
           <div className="erp-form-section">
-            <div className="erp-form-section-title">
-              Available Plans
-            </div>
+            <div className="erp-form-section-title">ERP Status</div>
 
-            <div className="erp-plan-selection">
-              {PLAN_OPTIONS.map((plan) => {
-                const selected =
-                  formData.plans.includes(plan);
+            <div className="erp-status-options">
+              {["ACTIVE", "INACTIVE"].map((status) => {
+                const selected = formData.status === status;
 
                 return (
                   <button
-                    key={plan}
+                    key={status}
                     type="button"
-                    className={`erp-plan-option ${
-                      selected
-                        ? "erp-plan-option-active"
-                        : ""
+                    className={`erp-status-option ${
+                      selected ? "erp-status-option-active" : ""
                     }`}
                     onClick={() =>
-                      handlePlanToggle(plan)
+                      setFormData((prev) => ({
+                        ...prev,
+                        status,
+                      }))
                     }
                   >
                     <span
-                      className={`erp-plan-checkbox ${
-                        selected
-                          ? "erp-plan-checkbox-active"
-                          : ""
+                      className={`erp-status-radio ${
+                        selected ? "erp-status-radio-active" : ""
                       }`}
-                    >
-                      {selected ? "✓" : ""}
-                    </span>
+                    />
 
-                    <span>{plan}</span>
+                    {status}
                   </button>
                 );
               })}
             </div>
-
-            {errors.plans && (
-              <small className="erp-form-error">
-                {errors.plans}
-              </small>
-            )}
           </div>
-
-          {/* STATUS */}
-
-          <div className="erp-form-section">
-            <div className="erp-form-section-title">
-              Product Status
-            </div>
-
-            <div className="erp-status-options">
-              {["Active", "Draft", "Inactive"].map(
-                (status) => {
-                  const selected =
-                    formData.status === status;
-
-                  return (
-                    <button
-                      key={status}
-                      type="button"
-                      className={`erp-status-option ${
-                        selected
-                          ? "erp-status-option-active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          status,
-                        }))
-                      }
-                    >
-                      <span
-                        className={`erp-status-radio ${
-                          selected
-                            ? "erp-status-radio-active"
-                            : ""
-                        }`}
-                      />
-
-                      {status}
-                    </button>
-                  );
-                },
-              )}
-            </div>
-          </div>
-
-          {/* FOOTER */}
 
           <div className="erp-form-footer">
             <button
               type="button"
               className="erp-form-cancel"
               onClick={onClose}
+              disabled={submitting}
             >
               Cancel
             </button>
-
             <button
-              type="submit"
-              className="erp-form-save"
-            >
-              <RiSaveLine />
-
-              {mode === "edit"
-                ? "Save Changes"
-                : "Create Product"}
-            </button>
+  type="submit"
+  className="erp-form-save"
+  disabled={submitting}
+>
+  {submitting ? (
+    <>
+      <Loader2 className="erp-form-loader" />
+      Creating...
+    </>
+  ) : (
+    <>
+      <RiSaveLine />
+      {mode === "edit" ? "Save Changes" : "Create ERP"}
+    </>
+  )}
+</button>
           </div>
         </form>
       </div>

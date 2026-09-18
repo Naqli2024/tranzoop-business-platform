@@ -63,7 +63,7 @@
 
   --color-shadow: rgba(0, 0, 0, 0.40);
   --color-success: #16805a;
-
+  
   --color-light-green: #070d18;
   
 }
@@ -87,8 +87,8 @@
   --color-border: #d9dde3;
   --color-light-border: rgba(17, 24, 39, 0.08);
 
-  --color-shadow: rgba(0, 0, 0, 0.08);
-
+  --color-shadow: rgba(199, 10, 10, 0.08);
+  --color-red: #f03c3c;
   --color-light-green: #eceee9;
 }
 ::-webkit-scrollbar {

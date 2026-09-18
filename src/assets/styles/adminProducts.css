@@ -2262,3 +2262,32 @@ background: var(--color-surface-soft);
     flex: 1;
   }
 }
+
+
+.erp-form-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.erp-form-loader {
+  width: 18px;
+  height: 18px;
+  animation: erpLoaderSpin 0.8s linear infinite;
+}
+
+@keyframes erpLoaderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.erp-form-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

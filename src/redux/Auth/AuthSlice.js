@@ -37,6 +37,23 @@ export const getMe = createAsyncThunk(
 );
 
 // --------------------------------------------------
+// LOGOUT API
+// --------------------------------------------------
+
+export const logout = createAsyncThunk(
+  "authAdmin/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await AuthService.post("/auth/logout");
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(handleApiError(error));
+    }
+  }
+);
+
+// --------------------------------------------------
 // AUTH SLICE
 // --------------------------------------------------
 
@@ -54,7 +71,8 @@ const AuthSlice = createSlice({
   },
 
   reducers: {
-    logout: (state) => {
+    // Clear authentication state locally
+    clearAuth: (state) => {
       state.admin = null;
       state.loading = false;
       state.initializing = false;
@@ -109,12 +127,35 @@ const AuthSlice = createSlice({
 
       .addCase(getMe.rejected, (state) => {
         state.initializing = false;
+        state.admin = null;
+      })
 
+      // --------------------------------------------------
+      // LOGOUT
+      // --------------------------------------------------
+
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.admin = null;
+        state.error = null;
+      })
+
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+
+        // Even if API logout fails,
+        // clear the local authentication state.
         state.admin = null;
       });
   },
 });
 
-export const { logout } = AuthSlice.actions;
+export const { clearAuth } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

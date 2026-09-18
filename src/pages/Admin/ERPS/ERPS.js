@@ -20,149 +20,14 @@ import "../../../assets/styles/adminProducts.css";
 import ProductDetailsModal from "./ProductsDetailsModal";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import ProductFormModal from "./ProductFormModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllErps } from "../../../redux/Auth/ErpsSlice";
+import { addErps } from "../../../redux/Auth/ErpsSlice";
 
-const PRODUCTS = [
-  {
-    id: "PROD-1001",
-    name: "Transport BOS",
-    slug: "transport-bos",
-    category: "Transport",
-    description:
-      "Complete business operating system for transport and logistics companies.",
-    icon: "🚚",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Active",
-    createdDate: "12 Aug 2026",
-    updatedDate: "28 Aug 2026",
-    customers: 128,
-    monthlyRevenue: 125640,
-  },
-  {
-    id: "PROD-1002",
-    name: "Tyre BOS",
-    slug: "tyre-bos",
-    category: "Tyre",
-    description:
-      "Business management platform for tyre shops, dealers and service centres.",
-    icon: "🛞",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Active",
-    createdDate: "14 Aug 2026",
-    updatedDate: "29 Aug 2026",
-    customers: 94,
-    monthlyRevenue: 78420,
-  },
-  {
-    id: "PROD-1003",
-    name: "Tailor BOS",
-    slug: "tailor-bos",
-    category: "Tailoring",
-    description:
-      "Complete tailoring management system for measurements, orders and customers.",
-    icon: "✂️",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Active",
-    createdDate: "18 Aug 2026",
-    updatedDate: "30 Aug 2026",
-    customers: 76,
-    monthlyRevenue: 53210,
-  },
-  {
-    id: "PROD-1004",
-    name: "Retail BOS",
-    slug: "retail-bos",
-    category: "Retail",
-    description:
-      "Retail business management platform for inventory, sales and customers.",
-    icon: "🏪",
-    plans: ["Free", "Standard"],
-    status: "Draft",
-    createdDate: "22 Aug 2026",
-    updatedDate: "31 Aug 2026",
-    customers: 0,
-    monthlyRevenue: 0,
-  },
-  {
-    id: "PROD-1005",
-    name: "Salon BOS",
-    slug: "salon-bos",
-    category: "Salon",
-    description:
-      "Salon management platform for appointments, queues, customers and staff.",
-    icon: "💇",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Inactive",
-    createdDate: "25 Aug 2026",
-    updatedDate: "01 Sep 2026",
-    customers: 18,
-    monthlyRevenue: 9800,
-  },
-  {
-    id: "PROD-1006",
-    name: "Restaurant BOS",
-    slug: "restaurant-bos",
-    category: "Restaurant",
-    description:
-      "Restaurant operating system for orders, tables, billing and operations.",
-    icon: "🍽️",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Draft",
-    createdDate: "26 Aug 2026",
-    updatedDate: "01 Sep 2026",
-    customers: 0,
-    monthlyRevenue: 0,
-  },
-  {
-    id: "PROD-1007",
-    name: "Service BOS",
-    slug: "service-bos",
-    category: "Services",
-    description:
-      "Business operating system for service-based businesses and professionals.",
-    icon: "🧰",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Active",
-    createdDate: "27 Aug 2026",
-    updatedDate: "01 Sep 2026",
-    customers: 34,
-    monthlyRevenue: 22100,
-  },
-  {
-    id: "PROD-1008",
-    name: "Manufacturing BOS",
-    slug: "manufacturing-bos",
-    category: "Manufacturing",
-    description:
-      "Manufacturing management platform for production and operational workflows.",
-    icon: "🏭",
-    plans: ["Standard", "Premium"],
-    status: "Draft",
-    createdDate: "28 Aug 2026",
-    updatedDate: "02 Sep 2026",
-    customers: 0,
-    monthlyRevenue: 0,
-  },
-  {
-    id: "PROD-1009",
-    name: "Property BOS",
-    slug: "property-bos",
-    category: "Real Estate",
-    description:
-      "Property management platform for listings, buyers, sellers and deals.",
-    icon: "🏠",
-    plans: ["Free", "Standard", "Premium"],
-    status: "Active",
-    createdDate: "29 Aug 2026",
-    updatedDate: "02 Sep 2026",
-    customers: 21,
-    monthlyRevenue: 18900,
-  },
-];
+
 
 const ITEMS_PER_PAGE = 6;
-
-const STATUS_OPTIONS = ["All", "Active", "Inactive", "Draft"];
-
+const STATUS_OPTIONS = ["All", "ACTIVE", "INACTIVE", "DRAFT"];
 const CATEGORY_OPTIONS = [
   "All",
   "Transport",
@@ -177,9 +42,20 @@ const CATEGORY_OPTIONS = [
 ];
 
 const PLAN_OPTIONS = ["All", "Free", "Standard", "Premium"];
-
 const Products = () => {
-  const [products, setProducts] = useState(PRODUCTS);
+const dispatch = useDispatch();
+
+const { erps, loading, error } = useSelector(
+  (state) => state.erps
+);
+
+useEffect(() => {
+  dispatch(getAllErps());
+}, [dispatch]);
+
+
+const products = Array.isArray(erps) ? erps : [];
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -189,7 +65,7 @@ const Products = () => {
   const [showProductModal, setShowProductModal] = useState(false);
   const [openActionId, setOpenActionId] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
-  const [formMode, setFormMode] = useState("add");
+  const [formMode, setFormMode] = useState("");
   const [editingProduct, setEditingProduct] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
@@ -205,17 +81,16 @@ const Products = () => {
     });
   };
 
+
+
   const filteredProducts = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
+    console.log(search)
 
-    return products.filter((product) => {
+    return products.length >0 && products?.filter((product) => {
       const matchesSearch =
         !search ||
-        product.name.toLowerCase().includes(search) ||
-        product.id.toLowerCase().includes(search) ||
-        product.slug.toLowerCase().includes(search) ||
-        product.category.toLowerCase().includes(search) ||
-        product.description.toLowerCase().includes(search);
+        product?.name.toLowerCase().includes(search);
 
       const matchesStatus =
         statusFilter === "All" || product.status === statusFilter;
@@ -237,7 +112,7 @@ const Products = () => {
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedProducts = filteredProducts.length >0 && filteredProducts.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE,
   );
@@ -298,58 +173,21 @@ const Products = () => {
     setOpenActionId(null);
   };
 
-  const handleSaveProduct = (formData) => {
-    const today = new Date();
-
-    const formattedDate = today.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-
-    if (formMode === "add") {
-      const nextNumber =
-        products.reduce((max, product) => {
-          const number = parseInt(product.id.replace("PROD-", ""), 10);
-
-          return Math.max(max, number || 0);
-        }, 1000) + 1;
-
-      const newProduct = {
-        id: `PROD-${nextNumber}`,
-        name: formData.name,
-        slug: formData.slug,
-        category: formData.category,
-        description: formData.description,
-        icon: formData.icon,
-        plans: formData.plans,
-        status: formData.status,
-        createdDate: formattedDate,
-        updatedDate: formattedDate,
-        customers: 0,
-        monthlyRevenue: 0,
-      };
-
-      setProducts((prev) => [newProduct, ...prev]);
-
+ const handleSaveProduct = async (formData) => {
+  if (formMode === "add") {
+    try {
+      await dispatch(addErps(formData)).unwrap();
+      await dispatch(getAllErps());
+      setShowFormModal(false);
+      setEditingProduct(null);
       setCurrentPage(1);
-    } else {
-      setProducts((prev) =>
-        prev.map((item) =>
-          item.id === editingProduct.id
-            ? {
-                ...item,
-                ...formData,
-                updatedDate: formattedDate,
-              }
-            : item,
-        ),
-      );
+    } catch (error) {
     }
 
-    setShowFormModal(false);
-    setEditingProduct(null);
-  };
+    return;
+  }
+
+};
 
   const handleToggleStatus = (product) => {
     setConfirmDialog({
@@ -376,25 +214,7 @@ const Products = () => {
 
     if (!product) return;
 
-    if (type === "delete") {
-      setProducts((prev) => prev.filter((item) => item.id !== product.id));
-    }
 
-    if (type === "toggle") {
-      const nextStatus = product.status === "Active" ? "Inactive" : "Active";
-
-      setProducts((prev) =>
-        prev.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                status: nextStatus,
-                updatedDate: "04 Sep 2026",
-              }
-            : item,
-        ),
-      );
-    }
 
     closeConfirmDialog();
   };
@@ -491,7 +311,7 @@ const Products = () => {
             <span>Active Products</span>
 
             <strong>
-              {products.filter((item) => item.status === "Active").length}
+              {products.length > 0 && products.filter((item) => item.status === "Active").length}
             </strong>
 
             <small>Currently available products</small>
@@ -513,7 +333,7 @@ const Products = () => {
             <span>Draft Products</span>
 
             <strong>
-              {products.filter((item) => item.status === "Draft").length}
+              {products.length > 0 && products.filter((item) => item.status === "Draft").length}
             </strong>
 
             <small>Products still being prepared</small>
@@ -535,7 +355,7 @@ const Products = () => {
             <span>Total Customers</span>
 
             <strong>
-              {products
+              {products.length > 0 &&  products
                 .reduce((total, product) => total + product.customers, 0)
                 .toLocaleString("en-IN")}
             </strong>
@@ -554,7 +374,7 @@ const Products = () => {
 
             <input
               type="text"
-              placeholder="Search product, category or ID..."
+              placeholder="Search product"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -665,20 +485,12 @@ const Products = () => {
           <table className="erp-table">
             <thead>
               <tr>
-                <th>PRODUCT</th>
-
-                <th>CATEGORY</th>
-
-                <th>PLANS</th>
-
-                <th>CUSTOMERS</th>
-
-                <th>REVENUE</th>
-
+                <th>ID</th>
+                <th>Name</th>
+                <th>CODE</th>
+                <th>ICON</th>
+                <th>DiSPLAY ORDER</th>
                 <th>STATUS</th>
-
-                <th>UPDATED</th>
-
                 <th className="erp-action-column">ACTION</th>
               </tr>
             </thead>
@@ -686,81 +498,90 @@ const Products = () => {
             <tbody>
               {paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product) => (
-                  <tr key={product.id}>
-                    {/* PRODUCT */}
+                  <tr key={product._id}>
+                    <td>{product._id}</td>
 
                     <td>
                       <div className="erp-product-cell">
-                        <div className="erp-product-icon">
-                          {product.icon}
-                        </div>
+                     
 
                         <div className="erp-product-info">
                           <strong>{product.name}</strong>
 
-                          <span>{product.id}</span>
                         </div>
                       </div>
+                    </td>
+                    <td>
+                      {product.code}
+                    </td>
+                    <td>
+                       <div className="erp-product-icon">
+                          {product.icon}
+                        </div>
                     </td>
 
                     {/* CATEGORY */}
 
-                    <td>
+                    {/* <td>
                       <span className="erp-category">
                         {product.category}
                       </span>
-                    </td>
+                    </td> */}
 
                     {/* PLANS */}
-
+{/* 
                     <td>
                       <div className="erp-plans">
-                        {product.plans.map((plan) => (
+                        {product.plans?.map((plan) => (
                           <span
-                            key={`${product.id}-${plan}`}
+                            key={`${product._id}-${plan}`}
                             className={getPlanClass(plan)}
                           >
                             {plan}
                           </span>
                         ))}
                       </div>
-                    </td>
+                    </td> */}
 
                     {/* CUSTOMERS */}
 
-                    <td>
+                    {/* <td>
                       <span className="erp-number">
                         {product.customers.toLocaleString("en-IN")}
                       </span>
-                    </td>
+                    </td> */}
 
                     {/* REVENUE */}
-
+{/* 
                     <td>
                       <span className="erp-revenue">
                         ₹{product.monthlyRevenue.toLocaleString("en-IN")}
                       </span>
-                    </td>
+                    </td> */}
 
                     {/* STATUS */}
 
                     <td>
                       <span
-                        className={`erp-status ${getStatusClass(
-                          product.status,
-                        )}`}
+                        className="erp-display-order"
                       >
+                       
                         <span />
-                        {product.status}
+                        {product.displayOrder}
                       </span>
                     </td>
 
                     {/* UPDATED */}
 
-                    <td>
-                      <span className="erp-date">
-                        <RiCalendarLine />
-                        {product.updatedDate}
+                     <td>
+                      <span
+                        className={`erp-status ${getStatusClass(
+                          product.status,
+                        )}`}
+                      >
+                        
+                        <span />
+                        {product.status}
                       </span>
                     </td>
 
@@ -778,7 +599,7 @@ const Products = () => {
                             e.stopPropagation();
 
                             setOpenActionId(
-                              openActionId === product.id ? null : product.id,
+                              openActionId === product._id ? null : product._id,
                             );
                           }}
                           aria-label={`Actions for ${product.name}`}
@@ -786,7 +607,7 @@ const Products = () => {
                           <RiMore2Fill />
                         </button>
 
-                        {openActionId === product.id && (
+                        {openActionId === product._id && (
                           <div className="erp-action-menu">
                             <button
                               type="button"
@@ -865,7 +686,7 @@ const Products = () => {
             paginatedProducts.map((product) => (
               <div
                 className="erp-mobile-card"
-                key={`mobile-${product.id}`}
+                key={`mobile-${product._id}`}
               >
                 <div className="erp-mobile-top">
                   <div className="erp-product-cell">
@@ -874,7 +695,7 @@ const Products = () => {
                     <div className="erp-product-info">
                       <strong>{product.name}</strong>
 
-                      <span>{product.id}</span>
+                      <span>{product._id}</span>
                     </div>
                   </div>
 
@@ -888,7 +709,7 @@ const Products = () => {
                   </span>
                 </div>
 
-                <div className="erp-mobile-details">
+                {/* <div className="erp-mobile-details">
                   <div>
                     <span>Category</span>
 
@@ -908,24 +729,20 @@ const Products = () => {
                       ₹{product.monthlyRevenue.toLocaleString("en-IN")}
                     </strong>
                   </div>
-                </div>
+                </div> */}
 
-                <div className="erp-mobile-plans">
+                {/* <div className="erp-mobile-plans">
                   {product.plans.map((plan) => (
                     <span
-                      key={`${product.id}-mobile-${plan}`}
+                      key={`${product._id}-mobile-${plan}`}
                       className={getPlanClass(plan)}
                     >
                       {plan}
                     </span>
                   ))}
-                </div>
+                </div> */}
 
-                <div className="erp-mobile-date">
-                  <RiCalendarLine />
-
-                  <span>Updated {product.updatedDate}</span>
-                </div>
+             
 
                 <div className="erp-mobile-actions">
                   <button

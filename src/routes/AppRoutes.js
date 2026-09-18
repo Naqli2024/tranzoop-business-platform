@@ -1,6 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import Header from "../components/Header.js";
-import LandingPage from "../pages/LandingPage/LandingPage.js";
 import LoginPage from "../pages/Auth/LoginPage.js";
 import Pricing from "../pages/BOS/Products/Pricing.js";
 import CustomerAccount from "../pages/Auth/CustomerAccount.js";
@@ -19,6 +18,8 @@ import Transactions from "../pages/Admin/Billing&Payments/Transactions.js";
 import Profile from "../pages/Admin/Profile/Profile.js";
 import ERPS from "../pages/Admin/ERPS/ERPS.js";
 import Products from "../pages/BOS/Products/Products.js";
+import ProtectedRoute from "./ProtectedRoute.js";
+import LandingPage from "../pages/BOS/LandingPage/LandingPage.js";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -43,18 +44,23 @@ const AppRoutes = () => {
         <Route path="checkout" element={<Checkout />} />
         <Route path="payment-success" element={<PaymentSuccess />} />
 
-        <Route path="/admin" element={<AdminMain />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="businesses" element={<Businesses />} />
-          <Route path="businesses/:id" element={<BusinessDetails />} />
-          <Route path="erp-management" element={<ERPS/>} />
-          <Route path="plans-pricing" element={<PricingPlan />} />
-          <Route path="subscriptions" element={<Subscriptions />} />
-          <Route path="api-usage" element={<APIUsage />} />
-          <Route path="payments" element={<Payments />} />
-          <Route path="invoices" element={<Invoices />} />
-          <Route path="transactions" element={<Transactions />} />
-          <Route path="profile" element={<Profile />} />
+        /* ===================================================== 
+                      PROTECTED ROUTES
+         ===================================================== */
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminMain />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="businesses" element={<Businesses />} />
+            <Route path="businesses/:id" element={<BusinessDetails />} />
+            <Route path="erp-management" element={<ERPS />} />
+            <Route path="plans-pricing" element={<PricingPlan />} />
+            <Route path="subscriptions" element={<Subscriptions />} />
+            <Route path="api-usage" element={<APIUsage />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="invoices" element={<Invoices />} />
+            <Route path="transactions" element={<Transactions />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
       </Routes>
     </>

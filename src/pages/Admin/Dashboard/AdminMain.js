@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   RiMenuFoldLine,
@@ -12,6 +12,10 @@ import { ThemeContext } from "../../../helpers/ThemeContext";
 import { MdOutlineDarkMode } from "react-icons/md";
 import { MdOutlineLightMode } from "react-icons/md";
 import ConfirmDialog from "../../../components/ConfirmDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { getMe, logout } from "../../../redux/Auth/AuthSlice";
+import UnauthorizedDialog from "../../../helpers/UnauthorizedDialog";
+import { toast } from "react-toastify";
 
 const AdminMain = () => {
   const navigate = useNavigate();
@@ -20,6 +24,9 @@ const AdminMain = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openMenus, setOpenMenus] = useState({});
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const dispatch = useDispatch();
+
+  const { loading, admin } = useSelector((state) => state.authAdmin);
 
   const toggleMenu = (id) => {
     setOpenMenus((prev) => ({
@@ -27,20 +34,23 @@ const AdminMain = () => {
       [id]: !prev[id],
     }));
   };
-
   const handleLogout = () => {
     setShowLogoutConfirm(true);
   };
 
-  const confirmLogout = () => {
-    localStorage.removeItem("adminToken");
-
-    setShowLogoutConfirm(false);
-
-    navigate("/login");
+  const confirmLogout = async () => {
+    try {
+      const result = await dispatch(logout()).unwrap();
+      setShowLogoutConfirm(false);
+      toast.success(result.message || "Logged out successfully");
+      navigate("/login");
+    } catch (error) {
+      setShowLogoutConfirm(false);
+      toast.error(error || "Logout failed");
+    }
   };
 
-    const cancelLogout = () => {
+  const cancelLogout = () => {
     setShowLogoutConfirm(false);
   };
 
@@ -48,146 +58,125 @@ const AdminMain = () => {
     return children.some((item) => location.pathname.startsWith(item.path));
   };
 
+  useEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
+
   return (
     <>
-    <div className="admin-layout">
-      <aside
-        className={`admin-sidebar ${sidebarOpen ? "is-open" : "is-collapsed"}`}
-      >
-        <div className="admin-sidebar-header">
-          <div className="admin-logo" onClick={() => navigate("/admin")}>
-            <div className="header-logo">BIZOOP</div>
+      <div className="admin-layout">
+        <aside
+          className={`admin-sidebar ${sidebarOpen ? "is-open" : "is-collapsed"}`}
+        >
+          <div className="admin-sidebar-header">
+            <div className="admin-logo" onClick={() => navigate("/admin")}>
+              <div className="header-logo">BIZOOP</div>
 
-            <div className="admin-logo-subtitle">Marketplace Admin</div>
+              <div className="admin-logo-subtitle">Marketplace Admin</div>
+            </div>
+
+            <button
+              type="button"
+              className="admin-sidebar-close"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <RiCloseLine />
+            </button>
           </div>
 
-          <button
-            type="button"
-            className="admin-sidebar-close"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <RiCloseLine />
-          </button>
-        </div>
-
-        <div className="admin-profile-card">
-          <div className="admin-profile-avatar">A</div>
-
-          {sidebarOpen && (
-            <div className="admin-profile-info">
-              <strong>Administrator</strong>
-              <span>Super Admin</span>
+          <div className="admin-profile-card">
+            <div className="admin-profile-avatar">
+              {admin?.firstName?.charAt(0)?.toUpperCase() || ""}
             </div>
-          )}
-        </div>
 
-        {/* NAVIGATION */}
+            {sidebarOpen && (
+              <div className="admin-profile-info">
+                <strong>
+                  {[admin?.firstName].filter(Boolean).join(" ") || "Admin"}
+                  {[admin?.lastName].filter(Boolean).join(" ") || ""}
+                </strong>
 
-        <nav className="admin-sidebar-nav">
-          <div className="admin-nav-label">MANAGEMENT</div>
+                <span>{admin?.role || "User"}</span>
+              </div>
+            )}
+          </div>
 
-          {sidebarData.map((item) => {
-            const Icon = item.icon;
+          {/* NAVIGATION */}
 
-            const hasChildren =
-              Array.isArray(item.children) && item.children.length > 0;
+          <nav className="admin-sidebar-nav">
+            <div className="admin-nav-label">MANAGEMENT</div>
 
-            const childActive = hasChildren
-              ? isChildActive(item.children)
-              : false;
+            {sidebarData.map((item) => {
+              const Icon = item.icon;
 
-            const menuOpen = openMenus[item.id] || childActive;
+              const hasChildren =
+                Array.isArray(item.children) && item.children.length > 0;
 
-            if (hasChildren) {
-              return (
-                <div className="admin-nav-group" key={item.id}>
-                  <button
-                    type="button"
-                    className={`admin-nav-item ${
-                      childActive ? "is-parent-active" : ""
-                    }`}
-                    onClick={() => toggleMenu(item.id)}
-                  >
-                    <span className="admin-nav-left">
-                      <Icon className="admin-nav-icon" />
+              const childActive = hasChildren
+                ? isChildActive(item.children)
+                : false;
+
+              const menuOpen = openMenus[item.id] || childActive;
+
+              if (hasChildren) {
+                return (
+                  <div className="admin-nav-group" key={item.id}>
+                    <button
+                      type="button"
+                      className={`admin-nav-item ${
+                        childActive ? "is-parent-active" : ""
+                      }`}
+                      onClick={() => toggleMenu(item.id)}
+                    >
+                      <span className="admin-nav-left">
+                        <Icon className="admin-nav-icon" />
+
+                        {sidebarOpen && (
+                          <span className="admin-nav-text">{item.label}</span>
+                        )}
+                      </span>
 
                       {sidebarOpen && (
-                        <span className="admin-nav-text">{item.label}</span>
+                        <RiArrowDownSLine
+                          className={`admin-nav-arrow ${
+                            menuOpen ? "is-open" : ""
+                          }`}
+                        />
                       )}
-                    </span>
+                    </button>
 
-                    {sidebarOpen && (
-                      <RiArrowDownSLine
-                        className={`admin-nav-arrow ${
-                          menuOpen ? "is-open" : ""
-                        }`}
-                      />
+                    {/* CHILDREN */}
+
+                    {sidebarOpen && menuOpen && (
+                      <div className="admin-submenu">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.id}
+                            to={child.path}
+                            className={({ isActive }) =>
+                              `admin-submenu-item ${isActive ? "is-active" : ""}`
+                            }
+                          >
+                            <span className="admin-submenu-dot" />
+
+                            <span>{child.label}</span>
+                          </NavLink>
+                        ))}
+                      </div>
                     )}
-                  </button>
+                  </div>
+                );
+              }
 
-                  {/* CHILDREN */}
-
-                  {sidebarOpen && menuOpen && (
-                    <div className="admin-submenu">
-                      {item.children.map((child) => (
-                        <NavLink
-                          key={child.id}
-                          to={child.path}
-                          className={({ isActive }) =>
-                            `admin-submenu-item ${isActive ? "is-active" : ""}`
-                          }
-                        >
-                          <span className="admin-submenu-dot" />
-
-                          <span>{child.label}</span>
-                        </NavLink>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            return (
-              <NavLink
-                key={item.id}
-                to={item.path}
-                end={item.path === "/admin"}
-                className={
-                  ({ isActive }) => 
-                    `admin-nav-item ${isActive ? "is-active" : ""}
-                    ${!sidebarOpen ? 'no-left-border' : ''}`
-                }
-              >
-                <span className="admin-nav-left">
-                  <Icon className="admin-nav-icon" />
-
-                  {sidebarOpen && (
-                    <span className="admin-nav-text">{item.label}</span>
-                  )}
-                </span>
-
-                {sidebarOpen && (
-                  <RiArrowRightSLine className="admin-nav-arrow-right" />
-                )}
-              </NavLink>
-            );
-          })}
-        </nav>
-
-        {/* BOTTOM */}
-
-        <div className="admin-sidebar-bottom">
-          {sidebarBottomData.map((item) => {
-            const Icon = item.icon;
-
-            if (item.action === "logout") {
               return (
-                <button
+                <NavLink
                   key={item.id}
-                  type="button"
-                  className="admin-nav-item admin-logout"
-                  onClick={handleLogout}
+                  to={item.path}
+                  end={item.path === "/admin"}
+                  className={({ isActive }) =>
+                    `admin-nav-item ${isActive ? "is-active" : ""}
+                    ${!sidebarOpen ? "no-left-border" : ""}`
+                  }
                 >
                   <span className="admin-nav-left">
                     <Icon className="admin-nav-icon" />
@@ -196,94 +185,127 @@ const AdminMain = () => {
                       <span className="admin-nav-text">{item.label}</span>
                     )}
                   </span>
-                </button>
-              );
-            }
-
-            return (
-              <NavLink
-                key={item.id}
-                to={item.path}
-                className={({ isActive }) =>
-                  `admin-nav-item ${isActive ? "is-active" : ""}`
-                }
-              >
-                <span className="admin-nav-left">
-                  <Icon className="admin-nav-icon" />
 
                   {sidebarOpen && (
-                    <span className="admin-nav-text">{item.label}</span>
+                    <RiArrowRightSLine className="admin-nav-arrow-right" />
                   )}
-                </span>
-              </NavLink>
-            );
-          })}
+                </NavLink>
+              );
+            })}
+          </nav>
+          <div className="admin-sidebar-bottom">
+            {sidebarBottomData.map((item) => {
+              const Icon = item.icon;
+
+              if (item.action === "logout") {
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="admin-nav-item admin-logout"
+                    onClick={handleLogout}
+                  >
+                    <span className="admin-nav-left">
+                      <Icon className="admin-nav-icon" />
+
+                      {sidebarOpen && (
+                        <span className="admin-nav-text">{item.label}</span>
+                      )}
+                    </span>
+                  </button>
+                );
+              }
+              return (
+                <NavLink
+                  key={item.id}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `admin-nav-item ${isActive ? "is-active" : ""}`
+                  }
+                >
+                  <span className="admin-nav-left">
+                    <Icon className="admin-nav-icon" />
+
+                    {sidebarOpen && (
+                      <span className="admin-nav-text">{item.label}</span>
+                    )}
+                  </span>
+                </NavLink>
+              );
+            })}
+          </div>
+        </aside>
+        <div
+          className={`admin-content-wrapper ${
+            sidebarOpen ? "sidebar-open" : "sidebar-collapsed"
+          }`}
+        >
+          <header className="admin-topbar">
+            <div className="admin-topbar-left">
+              <button
+                type="button"
+                className="admin-menu-button"
+                onClick={() => setSidebarOpen((prev) => !prev)}
+              >
+                <RiMenuFoldLine />
+              </button>
+
+              <div className="admin-page-context">
+                <span>BIZOOP</span>
+                <strong>Marketplace Admin</strong>
+              </div>
+            </div>
+
+            <div className="admin-topbar-right">
+              <div className="admin-topbar-user">
+                <div className="dark-light-theme-toggle me-3">
+                  <div
+                    className={`dark-light-theme-btn ${theme === "dark" ? "active" : ""}`}
+                    onClick={toggleTheme}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Switch to dark theme"
+                    onKeyDown={(e) =>
+                      (e.key === "Enter" || e.key === " ") && toggleTheme()
+                    }
+                  >
+                    <MdOutlineDarkMode />
+                  </div>
+                  <div
+                    className={`dark-light-theme-btn ${theme === "light" ? "active" : ""}`}
+                    onClick={toggleTheme}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Switch to light theme"
+                    onKeyDown={(e) =>
+                      (e.key === "Enter" || e.key === " ") && toggleTheme()
+                    }
+                  >
+                    <MdOutlineLightMode />
+                  </div>
+                </div>
+                <div className="admin-topbar-avatar">
+                  {admin?.firstName?.charAt(0)?.toUpperCase() || "A"}
+                  {admin?.lastName?.charAt(0)?.toUpperCase() || "A"}
+                </div>
+
+                <div className="admin-profile-info">
+                  <strong>
+                    {[admin?.firstName].filter(Boolean).join(" ") || "Admin"}
+                    {[admin?.lastName].filter(Boolean).join(" ") || "Admin"}
+                  </strong>
+
+                  <span>{admin?.role || "User"}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+          <main className="admin-main-content">
+            <Outlet />
+          </main>
         </div>
-      </aside>
-
-      <div
-        className={`admin-content-wrapper ${
-          sidebarOpen ? "sidebar-open" : "sidebar-collapsed"
-        }`}
-      >
-        <header className="admin-topbar">
-          <div className="admin-topbar-left">
-            <button
-              type="button"
-              className="admin-menu-button"
-              onClick={() => setSidebarOpen((prev) => !prev)}
-            >
-              <RiMenuFoldLine />
-            </button>
-
-            <div className="admin-page-context">
-              <span>BIZOOP</span>
-              <strong>Marketplace Admin</strong>
-            </div>
-          </div>
-
-          <div className="admin-topbar-right">
-            <div className="admin-topbar-user">
-              <div className="dark-light-theme-toggle me-3">
-                <div
-                  className={`dark-light-theme-btn ${theme === "dark" ? "active" : ""}`}
-                  onClick={toggleTheme}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Switch to dark theme"
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && toggleTheme()
-                  }
-                >
-                  <MdOutlineDarkMode />
-                </div>
-                <div
-                  className={`dark-light-theme-btn ${theme === "light" ? "active" : ""}`}
-                  onClick={toggleTheme}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Switch to light theme"
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && toggleTheme()
-                  }
-                >
-                  <MdOutlineLightMode />
-                </div>
-              </div>
-              <div className="admin-topbar-avatar">A</div>
-              <div className="admin-topbar-user-info">
-                <strong>Administrator</strong>
-                <span>Super Admin</span>
-              </div>
-            </div>
-          </div>
-        </header>
-        <main className="admin-main-content">
-          <Outlet />
-        </main>
       </div>
-    </div>
-          <ConfirmDialog
+      <ConfirmDialog
         open={showLogoutConfirm}
         title="Logout?"
         message="Are you sure you want to logout from the BIZOOP Marketplace Admin panel?"
