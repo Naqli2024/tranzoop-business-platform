@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiArrowRight,
   FiCheckCircle,
@@ -12,69 +12,128 @@ import {
 } from "react-icons/fi";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import "../../assets/styles/auth.css";
-import { PRODUCTS } from "../BOS/Products/Pricing";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { getPublicByErpCode } from "../../redux/Auth/PlansSlice";
+import { getAllErps, getErpById } from "../../redux/Auth/ErpsSlice";
 
 const CustomerAccount = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch()
 
-  const productSlug = searchParams.get("product") || "transport";
-  const planId = searchParams.get("plan") || "standard";
+  const erpCode = searchParams.get("erpCode");
+  const planId = searchParams.get("planId");
 
-  const product = PRODUCTS[productSlug] || PRODUCTS.transport;
+  const { erps, erpDetail } = useSelector((state) => state.erps);
 
-  const selectedPlan =
-    product.plans.find((plan) => plan.id === planId) ||
-    product.plans.find((plan) => plan.id === "standard");
+  const { plans } = useSelector((state) => state.plans);
+
+  // Get all ERPs
+  useEffect(() => {
+    dispatch(getAllErps());
+  }, [dispatch]);
+
+  // Get plans using ERP code
+  useEffect(() => {
+    if (erpCode) {
+      dispatch(getPublicByErpCode(erpCode));
+    }
+  }, [dispatch, erpCode]);
+
+  // Find ERP using ERP code
+  const currentErp = erps.find((erp) => erp.code === erpCode);
+
+  // Get ERP details using ERP ID
+  useEffect(() => {
+    if (currentErp?._id) {
+      dispatch(getErpById(currentErp._id));
+    }
+  }, [dispatch, currentErp?._id]);
+
+  const selectedPlan = plans.find((plan) => plan._id === planId);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    organizationName: "",
-    businessType: "",
-    gstNo: "",
-    businessLogo: null,
+    business: {
+      transportName: "",
+      mobile: "",
+      username: "",
+      password: "",
+      businessType: "",
+      gstNo: "",
+    },
     addressLine1: "",
     addressLine2: "",
     city: "",
     state: "",
     pincode: "",
     country: "India",
-
-    contactName: "",
-    mobile: "",
-    email: "",
-
-    password: "",
     confirmPassword: "",
     terms: false,
+    businessLogo: null,
   });
 
   const isFormValid =
-    formData.organizationName.trim() !== "" &&
-    formData.businessType !== "" &&
-    formData.addressLine1.trim() !== "" &&
-    formData.city.trim() !== "" &&
+    formData.business?.transportName?.trim() !== "" &&
+    formData.business?.businessType !== "" &&
+    formData.addressLine1?.trim() !== "" &&
+    formData.city?.trim() !== "" &&
     formData.state !== "" &&
-    formData.pincode.trim() &&
+    formData.pincode?.trim().length === 6 &&
     formData.country !== "" &&
-    formData.contactName.trim() !== "" &&
-    formData.mobile.trim().length === 10 &&
-    formData.email.trim() !== "" &&
-    formData.password.length >= 8 &&
-    formData.confirmPassword.length >= 8 &&
-    formData.password === formData.confirmPassword &&
+    formData.business?.mobile?.trim().length === 10 &&
+    formData.business?.username?.trim() !== "" &&
+    formData.business?.password?.length >= 8 &&
+    formData.confirmPassword === formData.business?.password &&
     formData.terms === true;
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
+    if (name === "confirmPassword") {
+      setFormData((prev) => ({
+        ...prev,
+        confirmPassword: value,
+      }));
+      return;
+    }
+
+    if (name === "terms") {
+      setFormData((prev) => ({
+        ...prev,
+        terms: checked,
+      }));
+      return;
+    }
+
+    const addressFields = [
+      "addressLine1",
+      "addressLine2",
+      "city",
+      "state",
+      "pincode",
+      "country",
+    ];
+
+    if (addressFields.includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      business: {
+        ...prev.business,
+        [name]: type === "checkbox" ? checked : value,
+      },
     }));
   };
 
@@ -93,41 +152,84 @@ const CustomerAccount = () => {
   };
 
   const handleLogoChange = (e) => {
-  const file = e.target.files?.[0];
+    const file = e.target.files?.[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  // Allow common logo formats
-  const allowedTypes = [
-    "image/png",
-    "image/jpeg",
-    "image/jpg",
-    "image/webp",
-    "image/svg+xml",
-  ];
+    // Allow common logo formats
+    const allowedTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+      "image/svg+xml",
+    ];
 
-  if (!allowedTypes.includes(file.type)) {
-    alert("Please upload a PNG, JPG, WEBP, or SVG image.");
-    return;
-  }
+    if (!allowedTypes.includes(file.type)) {
+      alert("Please upload a PNG, JPG, WEBP, or SVG image.");
+      return;
+    }
 
-  // 2MB limit
-  if (file.size > 2 * 1024 * 1024) {
-    alert("Logo size should not exceed 2MB.");
-    return;
-  }
+    // 2MB limit
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Logo size should not exceed 2MB.");
+      return;
+    }
 
-  setFormData((prev) => ({
-    ...prev,
-    businessLogo: file,
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      businessLogo: file,
+    }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    console.log("Customer Account Data:", formData);
+  if (!formData.terms) {
+    alert("Please agree to the Terms & Conditions and Privacy Policy.");
+    return;
+  }
+
+  if (!isFormValid) {
+    return;
+  }
+
+  const address = [
+    formData.addressLine1,
+    formData.addressLine2,
+    formData.city,
+    formData.state,
+    formData.pincode,
+    formData.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const payload = {
+    erpCode,
+    planId,
+    business: {
+      transportName: formData.business.transportName,
+      address,
+      mobile: formData.business.mobile,
+      username: formData.business.username,
+      password: formData.business.password,
+      businessType: formData.business.businessType,
+      gstNo: formData.business.gstNo,
+    },
   };
+
+   navigate(
+    `/checkout?erpCode=${encodeURIComponent(
+      erpCode
+    )}&planId=${encodeURIComponent(planId)}`,
+    {
+      state: {
+        account: payload,
+      },
+    }
+  );
+};
 
   return (
     <div className="ca-page">
@@ -158,9 +260,8 @@ const CustomerAccount = () => {
                 </div>
                 <button
                   type="button"
-                  className={`ca-dropdown ${
-                    openSections.business ? "is-open" : ""
-                  }`}
+                  className={`ca-dropdown ${openSections.business ? "is-open" : ""
+                    }`}
                   onClick={() => toggleSection("business")}
                   aria-label={
                     openSections.business
@@ -174,151 +275,167 @@ const CustomerAccount = () => {
               {openSections.business && (
                 <div className="ca-fields">
 
-  {/* BUSINESS NAME */}
-  <div className="ca-field ca-field-full">
-    <label>
-      Business / Organization Name
-      <span>*</span>
-    </label>
+                  {/* BUSINESS NAME */}
+                  <div className="ca-field ca-field-full">
+                    <label>
+                      Business / Organization Name
+                      <span>*</span>
+                    </label>
 
-    <div className="ca-input-wrap">
-      <HiOutlineBuildingOffice2 />
+                    <div className="ca-input-wrap">
+                      <HiOutlineBuildingOffice2 />
 
-      <input
-        type="text"
-        name="organizationName"
-        value={formData.organizationName}
-        onChange={handleChange}
-        placeholder="Enter your business name"
-        required
-      />
-    </div>
-  </div>
+                      <input
+                        type="text"
+                        name="transportName"
+                        value={formData.business.transportName}
+                        onChange={handleChange}
+                        placeholder="Enter your business name"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {/* BUSINESS LOGO */}
+                  {/* <div className="ca-field ca-field-full">
 
+                    <label>
+                      Company / Business Logo
+                    </label>
 
-  {/* BUSINESS LOGO */}
-  <div className="ca-field ca-field-full">
+                    <div className="ca-logo-upload">
 
-    <label>
-      Company / Business Logo
-    </label>
+                      <input
+                        type="file"
+                        id="businessLogo"
+                        name="businessLogo"
+                        accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                        onChange={handleLogoChange}
+                        hidden
+                      />
 
-    <div className="ca-logo-upload">
+                      <label
+                        htmlFor="businessLogo"
+                        className="ca-logo-upload-box"
+                      >
 
-      <input
-        type="file"
-        id="businessLogo"
-        name="businessLogo"
-        accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
-        onChange={handleLogoChange}
-        hidden
-      />
+                        {formData.businessLogo ? (
+                          <>
+                            <div className="ca-logo-preview">
+                              <img
+                                src={URL.createObjectURL(formData.businessLogo)}
+                                alt="Business logo preview"
+                              />
+                            </div>
 
-      <label
-        htmlFor="businessLogo"
-        className="ca-logo-upload-box"
-      >
+                            <div className="ca-logo-upload-content">
+                              <strong>
+                                {formData.businessLogo.name}
+                              </strong>
 
-        {formData.businessLogo ? (
-          <>
-            <div className="ca-logo-preview">
-              <img
-                src={URL.createObjectURL(formData.businessLogo)}
-                alt="Business logo preview"
-              />
-            </div>
+                              <span>
+                                Click to change logo
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="ca-logo-icon">
+                              <HiOutlineBuildingOffice2 />
+                            </div>
 
-            <div className="ca-logo-upload-content">
-              <strong>
-                {formData.businessLogo.name}
-              </strong>
+                            <div className="ca-logo-upload-content">
+                              <strong>
+                                Upload your business logo
+                              </strong>
 
-              <span>
-                Click to change logo
-              </span>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="ca-logo-icon">
-              <HiOutlineBuildingOffice2 />
-            </div>
+                              <span>
+                                PNG, JPG, WEBP or SVG · Max 2MB
+                              </span>
+                            </div>
 
-            <div className="ca-logo-upload-content">
-              <strong>
-                Upload your business logo
-              </strong>
+                            <div className="ca-logo-browse">
+                              Browse
+                            </div>
+                          </>
+                        )}
 
-              <span>
-                PNG, JPG, WEBP or SVG · Max 2MB
-              </span>
-            </div>
+                      </label>
 
-            <div className="ca-logo-browse">
-              Browse
-            </div>
-          </>
-        )}
+                    </div>
 
-      </label>
+                    <p className="ca-field-hint">
+                      Your logo will be used across your BIZOOP business account.
+                    </p>
 
-    </div>
+                  </div> */}
 
-    <p className="ca-field-hint">
-      Your logo will be used across your BIZOOP business account.
-    </p>
+                  {/* BUSINESS TYPE */}
+                  <div className="ca-field">
+                    <label>
+                      Business Type
+                      <span>*</span>
+                    </label>
 
-  </div>
+                    <select
+                      name="businessType"
+                      value={formData.business.businessType}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select business type</option>
+                      <option value="Proprietorship">
+                        Proprietorship
+                      </option>
+                      <option value="Partnership">
+                        Partnership
+                      </option>
+                      <option value="Private Limited Company">
+                        Private Limited Company
+                      </option>
+                      <option value="Public Limited Company">
+                        Public Limited Company
+                      </option>
+                      <option value="LLP">
+                        LLP
+                      </option>
+                      <option value="Other">
+                        Other
+                      </option>
+                    </select>
+                  </div>
+                  <div className="ca-field">
+                    <label>GST Number</label>
 
+                    <input
+                      type="text"
+                      name="gstNo"
+                      value={formData.business.gstNo}
+                      onChange={handleChange}
+                      placeholder="Enter GST number"
+                      maxLength={15}
+                    />
+                  </div>
+                  <div className="ca-field">
+                    <label>
+                      Mobile Number
+                      <span>*</span>
+                    </label>
 
-  {/* BUSINESS TYPE */}
-  <div className="ca-field">
-    <label>
-      Business Type
-      <span>*</span>
-    </label>
-
-    <select
-      name="businessType"
-      value={formData.businessType}
-      onChange={handleChange}
-      required
-    >
-      <option value="">Select business type</option>
-      <option value="Proprietorship">
-        Proprietorship
-      </option>
-      <option value="Partnership">
-        Partnership
-      </option>
-      <option value="Private Limited Company">
-        Private Limited Company
-      </option>
-      <option value="Public Limited Company">
-        Public Limited Company
-      </option>
-      <option value="LLP">
-        LLP
-      </option>
-      <option value="Other">
-        Other
-      </option>
-    </select>
-  </div>
-  <div className="ca-field">
-    <label>GST Number</label>
-
-    <input
-      type="text"
-      name="gstNo"
-      value={formData.gstNo}
-      onChange={handleChange}
-      placeholder="Enter GST number"
-      maxLength={15}
-    />
-  </div>
-
-</div>
+                    <div className="ca-input-wrap">
+                      <FiPhone />
+                      <input
+                        type="text"
+                        name="mobile"
+                        value={formData.business.mobile}
+                        onChange={handleChange}
+                        placeholder="10-digit mobile number"
+                        maxLength={10}
+                        inputMode="numeric"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </section>
 
@@ -338,9 +455,8 @@ const CustomerAccount = () => {
 
                 <button
                   type="button"
-                  className={`ca-dropdown ${
-                    openSections.address ? "is-open" : ""
-                  }`}
+                  className={`ca-dropdown ${openSections.address ? "is-open" : ""
+                    }`}
                   onClick={() => toggleSection("address")}
                   aria-label={
                     openSections.address
@@ -427,7 +543,7 @@ const CustomerAccount = () => {
                     </label>
 
                     <input
-                      type="number"
+                      type="text"
                       name="pincode"
                       value={formData.pincode}
                       onChange={handleChange}
@@ -457,106 +573,6 @@ const CustomerAccount = () => {
               )}
             </section>
 
-            {/* Contact */}
-            <section className="ca-section">
-              <div className="ca-section-heading">
-                <div className="d-flex align-items-center gap-3">
-                  <div className="ca-section-icon">
-                    <FiUser />
-                  </div>
-
-                  <div>
-                    <h2>Primary contact</h2>
-                    <p>
-                      We'll use these details for important account updates.
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className={`ca-dropdown ${
-                    openSections.contact ? "is-open" : ""
-                  }`}
-                  onClick={() => toggleSection("contact")}
-                  aria-label={
-                    openSections.contact
-                      ? "Collapse primary contact"
-                      : "Expand primary contact"
-                  }
-                >
-                  <IoIosArrowDown />
-                </button>
-              </div>
-              {openSections.contact && (
-                <div className="ca-fields">
-                  <div className="ca-field">
-                    <label>
-                      Contact Person Name
-                      <span>*</span>
-                    </label>
-
-                    <div className="ca-input-wrap">
-                      <FiUser />
-                      <input
-                        type="text"
-                        name="contactName"
-                        value={formData.contactName}
-                        onChange={handleChange}
-                        placeholder="Full name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="ca-field">
-                    <label>
-                      Mobile Number
-                      <span>*</span>
-                    </label>
-
-                    <div className="ca-input-wrap">
-                      <FiPhone />
-                      <input
-                        type="number"
-                        name="mobile"
-                        value={formData.mobile}
-                        onChange={handleChange}
-                        placeholder="10-digit mobile number"
-                        maxLength={10}
-                        inputMode="numeric"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="ca-field ca-field-full">
-                    <label>
-                      Email Address
-                      <span>*</span>
-                    </label>
-
-                    <div className="ca-input-wrap">
-                      <FiMail />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="you@company.com"
-                        required
-                      />
-                    </div>
-
-                    <small className="ca-help">
-                      Your email will be used for login, invoices, receipts and
-                      account notifications.
-                    </small>
-                  </div>
-                </div>
-              )}
-            </section>
-
             {/* Account */}
             <section className="ca-section">
               <div className="ca-section-heading">
@@ -573,9 +589,8 @@ const CustomerAccount = () => {
 
                 <button
                   type="button"
-                  className={`ca-dropdown ${
-                    openSections.account ? "is-open" : ""
-                  }`}
+                  className={`ca-dropdown ${openSections.account ? "is-open" : ""
+                    }`}
                   onClick={() => toggleSection("account")}
                   aria-label={
                     openSections.account
@@ -591,6 +606,24 @@ const CustomerAccount = () => {
                   <div className="ca-fields">
                     <div className="ca-field">
                       <label>
+                        Username
+                        <span>*</span>
+                      </label>
+
+                      <div className="ca-input-wrap">
+                        <FiUser />
+                        <input
+                          type="text"
+                          name="username"
+                          value={formData.business.username}
+                          onChange={handleChange}
+                          placeholder="Enter your username"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="ca-field">
+                      <label>
                         Password
                         <span>*</span>
                       </label>
@@ -601,7 +634,7 @@ const CustomerAccount = () => {
                         <input
                           type={showPassword ? "text" : "password"}
                           name="password"
-                          value={formData.password}
+                          value={formData.business.password}
                           onChange={handleChange}
                           placeholder="Create a password"
                           minLength={8}
@@ -688,21 +721,24 @@ const CustomerAccount = () => {
             {/* Mobile action */}
             <div className="ca-mobile-summary">
               <span>
-                {product.name} · {selectedPlan.name}
+                {erpDetail?.name} · {selectedPlan?.name}
               </span>
 
               <strong>
-                {selectedPlan.price === 0
+                {Number(selectedPlan?.amount || 0) === 0
                   ? "Free"
-                  : `₹${selectedPlan.price.toLocaleString("en-IN")} / month`}
+                  : `₹${Number(selectedPlan?.amount || 0).toLocaleString("en-IN")} ${selectedPlan?.billingCycle === "YEARLY"
+                    ? "/ year"
+                    : "/ month"
+                  }`}
               </strong>
             </div>
 
             <button
-            //   type="submit"
+              type="submit"
               className={`ca-submit ${isFormValid ? "is-valid" : "is-disabled"}`}
-            //   disabled={!isFormValid}
-              onClick={()=> navigate('/checkout')}
+              disabled={!isFormValid}
+
             >
               Continue to Checkout
               <FiArrowRight />
@@ -713,58 +749,69 @@ const CustomerAccount = () => {
         {/* Right Summary */}
         <aside className="ca-summary">
           <div className="ca-summary-card">
-            <div className="ca-summary-label">YOUR SELECTION</div>
+            <div className="ca-summary-label">
+              YOUR SELECTION
+            </div>
+            {/* ERP / Product */}
             <div className="ca-product">
-              <div className="ca-product-icon">{product.icon}</div>
-
+              <div className="ca-product-icon">
+                <HiOutlineBuildingOffice2 />
+              </div>
               <div>
-                <h3>{product.name}</h3>
-                <span>BOS Software</span>
+                <h3>{erpDetail?.name}</h3>
+                <span>BIZOOP Software</span>
               </div>
             </div>
+            {/* Selected Plan */}
             <div className="ca-plan">
               <div>
                 <span>Selected plan</span>
-                <strong>{selectedPlan.name}</strong>
+                <strong>{selectedPlan?.name}</strong>
               </div>
-
               <button
                 type="button"
-                onClick={() => navigate(`/pricing?product=${productSlug}`)}
+                onClick={() => navigate(`/pricing?erpCode=${erpCode}`)}
               >
                 Change
               </button>
             </div>
+            {/* Price */}
             <div className="ca-price">
-              {selectedPlan.price === 0 ? (
-                <>
-                  <strong>Free</strong>
-                </>
+              {Number(selectedPlan?.amount || 0) === 0 ? (
+                <strong>Free</strong>
               ) : (
                 <>
-                  <strong>₹{selectedPlan.price.toLocaleString("en-IN")}</strong>
-                  <span>/ month</span>
+                  <strong>
+                    ₹{Number(selectedPlan?.amount || 0).toLocaleString("en-IN")}
+                  </strong>
+                  <span>
+                    {selectedPlan?.billingCycle === "YEARLY"
+                      ? "/ year"
+                      : "/ month"}
+                  </span>
                 </>
               )}
             </div>
-            <p className="ca-selection-note">{selectedPlan.note}</p>
-
+            {/* Duration */}
+            <p className="ca-selection-note">
+              Duration: {selectedPlan?.durationDays} days
+            </p>
             <div className="ca-summary-divider" />
+            {/* Features */}
             <div className="ca-feature-heading">
               <span>What's included</span>
             </div>
-
             <ul className="ca-summary-features">
-              {selectedPlan.features.map((feature) => (
+              {selectedPlan?.features?.map((feature) => (
                 <li key={feature}>
                   <FiCheckCircle />
                   <span>{feature}</span>
                 </li>
               ))}
-            </ul>
+           </ul>
+            {/* Security */}
             <div className="ca-trust">
               <FiLock />
-
               <div>
                 <strong>Your information is secure</strong>
                 <span>

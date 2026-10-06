@@ -90,7 +90,7 @@
 
 .businesses-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-bottom: 22px;
 }
@@ -543,7 +543,7 @@
   background: rgba(22, 128, 90, 0.10);
 }
 
-.businesses-status-pending {
+.businesses-status-inactive {
   color: #d97706;
   background: rgba(217, 119, 6, 0.10);
 }
@@ -551,6 +551,29 @@
 .businesses-status-suspended {
   color: #dc2626;
   background: rgba(220, 38, 38, 0.10);
+}
+.business-status-expired{
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.10);
+}
+
+.bd-subscription-meta .businesses-status-active {
+  color: var(--color-success);
+  background: rgba(22, 128, 90, 0.10);
+}
+
+.bd-subscription-meta .businesses-status-inactive {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.10);
+}
+
+.bd-subscription-meta .businesses-status-suspended {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.10);
+}
+.bd-subscription-meta .business-status-expired{
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.10);
 }
 
 /* Actions */
@@ -1351,7 +1374,7 @@ min-height: 58px;
 
 .bd-stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-bottom: 22px;
 }
@@ -1387,7 +1410,7 @@ min-height: 58px;
 
 .bd-layout {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 1fr ;
   gap: 16px;
   align-items: start;
 }
@@ -1398,7 +1421,9 @@ min-height: 58px;
   gap: 16px;
   min-width: 0;
 }
-
+.bd-name{
+  text-transform: capitalize;
+}
 .bd-panel {
   padding: 22px;
   border: 1px solid var(--color-border);
@@ -1424,7 +1449,7 @@ min-height: 58px;
 
 .bd-info-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 

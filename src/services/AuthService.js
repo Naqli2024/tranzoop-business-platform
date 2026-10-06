@@ -39,6 +39,7 @@ AuthService.interceptors.response.use(
       !originalRequest._retry &&
       !originalRequest.url?.includes("/auth/refresh") &&
       !originalRequest.url?.includes("/auth/logout")
+      
     ) {
       originalRequest._retry = true;
 

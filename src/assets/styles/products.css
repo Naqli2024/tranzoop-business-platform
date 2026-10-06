@@ -532,6 +532,34 @@
   }
 }
 /* =============================================PRICING PAGE========================================================= */
+.pricing-card:nth-child(1) {
+  --card-color: #3b82f6;
+  --card-bg: rgba(59, 130, 246, 0.08);
+}
+
+/* Purple */
+.pricing-card:nth-child(2) {
+  --card-color: #8b5cf6;
+  --card-bg: rgba(139, 92, 246, 0.08);
+}
+
+/* Green */
+.pricing-card:nth-child(3) {
+  --card-color: #10b981;
+  --card-bg: rgba(16, 185, 129, 0.08);
+}
+
+/* Orange */
+.pricing-card:nth-child(4) {
+  --card-color: #f97316;
+  --card-bg: rgba(249, 115, 22, 0.08);
+}
+
+/* Red */
+.pricing-card:nth-child(5) {
+  --card-color: #ef4444;
+  --card-bg: rgba(239, 68, 68, 0.08);
+}
 .pricing-page {
   width: 100%;
   min-height: 100vh;
@@ -647,9 +675,9 @@
   display: flex;
   flex-direction: column;
   padding: 34px 28px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--card-color);
   border-radius: 18px;
-  background: var(--color-surface);
+  background: var(--card-bg);
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
   height: 100%;
   max-height: 600px;
@@ -708,6 +736,7 @@
   color: var(--color-text-primary);
   font-size: 19px;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .pricing-card-description {
@@ -726,7 +755,7 @@
 
 .pricing-currency {
   color: var(--color-text-primary);
-  font-size: 18px;
+  font-size: 38px;
   font-weight: 700;
 }
 
@@ -757,7 +786,7 @@
   margin-bottom: 28px;
   border: none;
   border-radius: 999px;
-  background: var(--color-success);
+  background: var(--card-color);
   color: var(--color-white);
   font-family: inherit;
   font-size: 13.5px;
@@ -805,14 +834,13 @@
   flex-shrink: 0;
   width: 16px;
   font-style: normal;
-  color: var(--color-success);
+  color: var(--card-color);
   font-weight: 700;
 }
 
 .pricing-card-featured .pricing-feature-check {
   color: var(--color-accent);
 }
-
 /* =========================================================
    RESPONSIVE
 ========================================================= */

@@ -68,32 +68,75 @@ const PlansSlice = createSlice({
     error: null,
   },
 
-  reducers: {},
-
-  extraReducers: (builder) => {
-    const handlePending = (state) => {
-      state.loading = true;
-    };
-
-    const handleFullFilled = (state, action) => {
-      state.loading = false;
-      state.plans = action.payload?.data || [];
-      state.error = null;
-    };
-
-    const handleRejected = (state, action) => {
-      state.loading = false;
-      state.plans = [];
-      state.error = action.payload;
-    };
-
-    [addPlans, getPublicByErpCode, editPlan, deletePlan].forEach((action) => {
-      builder
-        .addCase(action.pending, handlePending)
-        .addCase(action.fulfilled, handleFullFilled)
-        .addCase(action.rejected, handleRejected);
-    });
+  reducers: {
+    setPlans: (state, action) => {
+      state.plans = action.payload;
+    },
   },
-});
 
+ extraReducers: (builder) => {
+  const handlePending = (state) => {
+    state.loading = true;
+  };
+
+  const handleFulfilled = (state, action) => {
+    state.loading = false;
+    state.error = null;
+
+    switch (action.type) {
+      case addPlans.fulfilled.type:
+        state.plans = action.payload.data;
+        break;
+
+      case getPublicByErpCode.fulfilled.type:
+         state.plans = action.payload?.data || [];
+         break;
+
+      case editPlan.fulfilled.type: {
+        const updatedPlan = action.payload?.data  || action.payload;
+
+        if (!updatedPlan?._id) {
+          break;
+        }
+
+        const index = state.plans.findIndex(
+          (plan) => plan._id === updatedPlan._id
+        );
+
+        if (index !== -1) {
+          state.plans[index] = updatedPlan;
+        }
+
+        break;
+      }
+
+      case deletePlan.fulfilled.type: {
+        const deletedPlanId = action.meta.arg;
+
+        state.plans = state.plans.filter(
+          (plan) => plan._id !== deletedPlanId
+        );
+
+        break;
+      }
+
+      default:
+        break;
+    }
+  };
+
+  const handleRejected = (state, action) => {
+    state.loading = false;
+    state.error = action.payload;
+  };
+
+  [addPlans, getPublicByErpCode, editPlan, deletePlan].forEach((action) => {
+    builder
+      .addCase(action.pending, handlePending)
+      .addCase(action.fulfilled, handleFulfilled)
+      .addCase(action.rejected, handleRejected);
+  });
+},
+});
+export const { setPlans } = PlansSlice.actions;
 export default PlansSlice.reducer;

@@ -1,7 +1,7 @@
 /* =========================================================
    HEADER
 ========================================================= */
-
+ 
 .header-overall-container {
   position: fixed;
   top: 0;
@@ -9,477 +9,516 @@
   right: 0;
   width: 100%;
   z-index: 1000;
-
+ 
   background: transparent;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
+ 
   pointer-events: none;
 }
-
+ 
 .header-container {
   position: relative;
-
+ 
   pointer-events: auto;
-
+ 
   width: calc(100% - 32px);
   max-width: 1280px;
-
+ 
   height: 74px;
-
+ 
   margin: 20px auto 0;
   background: color-mix(in srgb, var(--color-surface) 78%, transparent);
-
+ 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
+ 
   border: 1px solid var(--color-border);
-
+ 
   border-radius: 20px;
-
+ 
   box-shadow:
     0 8px 32px var(--color-shadow),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
+ 
   transition:
     background 250ms ease,
     border-color 250ms ease,
     box-shadow 250ms ease;
 }
-
+ 
 .header-inner {
   width: calc(100% - 48px);
   max-width: 1200px;
-
+ 
   height: 100%;
-
+ 
   margin: 0 auto;
-
+ 
   display: flex;
   align-items: center;
   justify-content: space-between;
-
+ 
   box-sizing: border-box;
 }
-
+ 
 .header-logo {
   flex-shrink: 0;
-
   display: inline-flex;
   align-items: center;
-
+  gap: 8px;
+ 
   padding: 0;
-
   border: 0;
-
   background: transparent;
-
-  color: var(--color-accent);
-
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-
+  /* color: var(--color-accent); */
+  /* font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif; */
   font-size: 22px;
   font-weight: 700;
-
-  letter-spacing: 2px;
-
+  letter-spacing: 1px;
   white-space: nowrap;
-
   cursor: pointer;
-
   transition:
     color 180ms ease,
     transform 180ms ease;
 }
-
+ 
+.header-logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 7px;
+  flex-shrink: 0;
+  display: block; /* Faster idle movement */
+  animation: botIdle 1.2s ease-in-out infinite;
+  transition: transform 180ms ease;
+} /* Quick little jumping / floating movement */
+@keyframes botIdle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-2deg);
+  }
+} /* When user hovers over BIZOOP logo */
+.header-logo:hover .header-logo-image {
+  animation: botWave 600ms ease-in-out;
+} /* Little "Hi / Bye" style wave */
+@keyframes botWave {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-12deg) translateY(-2px);
+  }
+  40% {
+    transform: rotate(12deg) translateY(-3px);
+  }
+  60% {
+    transform: rotate(-9deg) translateY(-2px);
+  }
+  80% {
+    transform: rotate(7deg) translateY(-1px);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+ 
+.header-logo-text {
+  display: inline-block;
+  line-height: 1;
+}
+ 
 .header-logo:hover {
   color: var(--color-dark-accent);
 }
-
+ 
 .header-logo:active {
   transform: translateY(1px);
 }
-
+ 
 .header-nav {
   display: flex;
   align-items: center;
   justify-content: center;
-
+ 
   gap: 34px;
 }
-
+ 
 .header-nav button {
   position: relative;
-
+ 
   padding: 0;
-
+ 
   border: 0;
-
+ 
   background: transparent;
-
+ 
   color: var(--color-text-primary);
-
+ 
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
-
+ 
   cursor: pointer;
-
+ 
   transition: color 180ms ease;
 }
-
+ 
 .header-nav button::after {
   content: "";
-
+ 
   position: absolute;
-
+ 
   left: 0;
   bottom: -7px;
-
+ 
   width: 0;
   height: 2px;
-
+ 
   background: var(--color-accent);
-
+ 
   transition: width 180ms ease;
 }
-
+ 
 .header-nav button.header-nav-active {
   color: var(--color-accent);
 }
-
+ 
 .header-nav button.header-nav-active::after {
   width: 100%;
 }
-
+ 
 .header-nav button:hover {
   color: var(--color-accent);
 }
-
+ 
 .header-nav button:hover::after {
   width: 100%;
 }
-
+ 
 .header-actions {
   display: flex;
   align-items: center;
-
+ 
   gap: 12px;
 }
-
+ 
 .header-login-btn,
 .header-start-btn {
   height: 42px;
-
+ 
   padding: 0 22px;
-
+ 
   border-radius: 10px;
-
+ 
   font-family: inherit;
-
+ 
   font-size: 14px;
   font-weight: 700;
-
+ 
   cursor: pointer;
-
+ 
   transition:
     background 180ms ease,
     color 180ms ease,
     border-color 180ms ease,
     transform 180ms ease;
 }
-
+ 
 .header-login-btn {
   color: var(--color-text-primary);
-
+ 
   background: transparent;
-
+ 
   border: 1px solid transparent;
 }
-
+ 
 .header-login-btn:hover,
 .header-login-btn.header-login-active {
   color: var(--color-accent);
 }
-
+ 
 .header-start-btn {
   color: var(--color-text-primary);
-
+ 
   background: transparent;
-
+ 
   border: 1px solid var(--color-border);
 }
-
+ 
 .header-start-btn:hover {
   background: var(--color-accent);
-
+ 
   border-color: var(--color-accent);
-
+ 
   color: var(--color-primary);
 }
-
+ 
 .header-start-btn:active,
 .header-login-btn:active {
   transform: translateY(1px);
 }
-
+ 
 .header-menu-btn {
   display: none;
-
+ 
   width: 42px;
   height: 42px;
-
+ 
   padding: 8px;
-
+ 
   border: 0;
-
+ 
   background: transparent;
-
+ 
   cursor: pointer;
 }
-
+ 
 .header-menu-btn span {
   display: block;
-
+ 
   width: 25px;
   height: 2px;
-
+ 
   margin: 5px auto;
-
+ 
   background: var(--color-text-primary);
-
+ 
   transition:
     transform 200ms ease,
     opacity 200ms ease,
     background 200ms ease;
 }
-
+ 
 .header-menu-btn-active span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
-
+ 
 .header-menu-btn-active span:nth-child(2) {
   opacity: 0;
 }
-
+ 
 .header-menu-btn-active span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
-
+ 
 .header-mobile-menu {
   display: none;
 }
-
+ 
 .dark-light-theme-toggle {
   display: flex;
   align-items: center;
-
+ 
   gap: 3px;
-
+ 
   padding: 3px;
-
+ 
   flex-shrink: 0;
-
+ 
   background: var(--color-surface-soft);
-
+ 
   border: 1px solid var(--color-border);
-
+ 
   border-radius: 10px;
-
+ 
   transition:
     background 250ms ease,
     border-color 250ms ease;
 }
-
+ 
 .dark-light-theme-btn {
   width: 30px;
   height: 30px;
-
+ 
   padding: 0;
-
+ 
   display: flex;
   align-items: center;
   justify-content: center;
-
+ 
   border: 0;
-
+ 
   border-radius: 7px;
-
+ 
   background: transparent;
-
+ 
   color: var(--color-text-secondary);
-
+ 
   cursor: pointer;
-
+ 
   transition:
     background 180ms ease,
     color 180ms ease;
 }
-
+ 
 .dark-light-theme-btn svg {
   width: 16px;
   height: 16px;
-
+ 
   flex-shrink: 0;
 }
-
+ 
 .dark-light-theme-btn:hover {
   color: var(--color-text-primary);
 }
-
+ 
 .dark-light-theme-btn.active {
   background: var(--color-accent);
-
+ 
   color: var(--color-primary);
 }
-
+ 
 @media (max-width: 1080px) {
   .header-nav {
     gap: 26px;
   }
-
+ 
   .header-inner {
     width: calc(100% - 40px);
   }
 }
-
+ 
 @media (max-width: 992px) {
   .header-container {
     height: 68px;
-
+ 
     width: calc(100% - 32px);
-
+ 
     border-radius: 17px;
   }
-
+ 
   .header-inner {
     width: calc(100% - 32px);
   }
-
+ 
   .header-logo {
     font-size: 21px;
   }
-
+ 
   .header-nav,
   .header-actions {
     display: none;
   }
-
+ 
   .header-menu-btn {
     display: block;
   }
-
+ 
   .header-mobile-menu {
     position: absolute;
-
+ 
     top: calc(100% + 10px);
-
+ 
     left: 0;
-
+ 
     display: block;
-
+ 
     width: 100%;
-
+ 
     padding: 20px;
-
+ 
     box-sizing: border-box;
-
+ 
     background: color-mix(in srgb, var(--color-surface) 94%, transparent);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-
+ 
     border: 1px solid var(--color-border);
-
+ 
     border-radius: 16px;
-
+ 
     box-shadow: 0 16px 40px var(--color-shadow);
-
+ 
     opacity: 0;
-
+ 
     visibility: hidden;
-
+ 
     transform: translateY(-10px);
-
+ 
     transition:
       opacity 200ms ease,
       visibility 200ms ease,
       transform 200ms ease;
   }
-
+ 
   .header-mobile-menu-open {
     opacity: 1;
-
+ 
     visibility: visible;
-
+ 
     transform: translateY(0);
   }
-
+ 
   .header-mobile-theme-row {
     display: flex;
-
+ 
     justify-content: center;
-
+ 
     margin-bottom: 16px;
   }
-
+ 
   .header-mobile-nav {
     display: flex;
-
+ 
     flex-direction: column;
-
+ 
     gap: 0;
   }
-
+ 
   .header-mobile-nav button {
     width: 100%;
-
+ 
     padding: 14px 8px;
-
+ 
     text-align: left;
-
+ 
     color: var(--color-text-primary);
-
+ 
     background: transparent;
-
+ 
     border: 0;
-
+ 
     border-bottom: 1px solid var(--color-border);
-
+ 
     font-family: inherit;
-
+ 
     font-size: 15px;
-
+ 
     font-weight: 600;
-
+ 
     cursor: pointer;
-
+ 
     transition:
       color 180ms ease,
       padding-left 180ms ease;
   }
-
+ 
   .header-mobile-nav button:hover {
     color: var(--color-accent);
-
+ 
     padding-left: 14px;
   }
-
+ 
   .header-mobile-actions {
     display: grid;
-
+ 
     grid-template-columns: 1fr 1fr;
-
+ 
     gap: 10px;
-
+ 
     margin-top: 18px;
   }
-
+ 
   .header-mobile-actions .header-login-btn,
   .header-mobile-actions .header-start-btn {
     width: 100%;
   }
 }
-
+ 
 @media (max-width: 600px) {
   .header-container {
     height: 62px;
@@ -487,87 +526,89 @@
     margin-top: 12px;
     border-radius: 15px;
   }
-
+ 
   .header-inner {
     width: calc(100% - 22px);
   }
-
+ 
   .header-logo {
     font-size: 19px;
     letter-spacing: 1.5px;
   }
-
+ 
   .header-menu-btn {
     width: 38px;
-
+ 
     height: 38px;
   }
-
+ 
   .header-mobile-menu {
     padding: 17px;
   }
 }
-
+ 
 @media (max-width: 340px) {
   .header-container {
     border-radius: 14px;
   }
-
+ 
   .header-logo {
     font-size: 17px;
-
+ 
     letter-spacing: 1px;
   }
-
+ 
   .header-mobile-nav button {
     font-size: 14px;
-
+ 
     padding: 11px 6px;
   }
-
+ 
   .header-mobile-actions {
     gap: 8px;
   }
-
+ 
   .header-login-btn,
   .header-start-btn {
     padding: 0 12px;
-
+ 
     font-size: 13px;
   }
 }
-
+ 
 @supports (padding-top: env(safe-area-inset-top)) {
   .header-overall-container {
     padding-top: env(safe-area-inset-top);
   }
-
+ 
   .header-container {
     margin-top: 20px;
   }
-
+ 
   @media (max-width: 600px) {
     .header-container {
       margin-top: 12px;
     }
   }
 }
-
+ 
 @media (max-height: 480px) and (orientation: landscape) {
   .header-container {
     margin-top: 8px;
-
+ 
     height: 56px;
   }
-
+ 
   .header-mobile-menu {
     max-height: calc(100vh - 72px);
-
+ 
     overflow-y: auto;
   }
 }
-
+ 
 #vision,
 #faq {
   scroll-margin-top: 110px;
 }
+ 
+ 

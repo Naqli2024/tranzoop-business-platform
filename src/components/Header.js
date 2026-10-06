@@ -3,29 +3,29 @@ import "../assets/styles/header.css";
 import { ThemeContext } from "../helpers/ThemeContext";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import botLogo from "../assets/images/bot.png";
+ 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+ 
   const navigate = useNavigate();
   const location = useLocation();
-
+ 
   const { theme, toggleTheme } = useContext(ThemeContext);
-
+ 
   const closeMenu = () => setMenuOpen(false);
-
   const goToSection = (sectionId) => {
     closeMenu();
-
+ 
     if (location.pathname === "/") {
       const element = document.getElementById(sectionId);
-
+ 
       if (element) {
         const headerOffset = 110;
-
+ 
         const elementPosition =
           element.getBoundingClientRect().top + window.pageYOffset;
-
+ 
         window.scrollTo({
           top: elementPosition - headerOffset,
           behavior: "smooth",
@@ -35,20 +35,20 @@ const Header = () => {
       navigate(`/#${sectionId}`);
     }
   };
-
+ 
   useEffect(() => {
     if (location.pathname === "/" && location.hash) {
       const sectionId = location.hash.substring(1);
-
+ 
       setTimeout(() => {
         const element = document.getElementById(sectionId);
-
+ 
         if (element) {
           const headerOffset = 110;
-
+ 
           const elementPosition =
             element.getBoundingClientRect().top + window.pageYOffset;
-
+ 
           window.scrollTo({
             top: elementPosition - headerOffset,
             behavior: "smooth",
@@ -57,21 +57,21 @@ const Header = () => {
       }, 100);
     }
   }, [location]);
-
+ 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 992 && menuOpen) {
         setMenuOpen(false);
       }
     };
-
+ 
     window.addEventListener("resize", handleResize);
-
+ 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [menuOpen]);
-
+ 
   const ThemeToggle = () => (
     <div className="dark-light-theme-toggle">
       <button
@@ -86,7 +86,7 @@ const Header = () => {
       >
         <MdOutlineDarkMode />
       </button>
-
+ 
       <button
         type="button"
         className={`dark-light-theme-btn ${theme === "light" ? "active" : ""}`}
@@ -101,27 +101,32 @@ const Header = () => {
       </button>
     </div>
   );
-  
+ 
   const goHome = () => {
     closeMenu();
-
+ 
     if (location.pathname !== "/") {
       navigate("/");
       return;
     }
-
+ 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
-
+ 
   return (
     <div className="header-overall-container">
       <header className="header-container container">
         <div className="header-inner">
           <button type="button" className="header-logo" onClick={goHome}>
-            BIZOOP
+            <img
+              src={botLogo}
+              alt="BIZOOP logo"
+              className="header-logo-image"
+            />
+            <span className="header-logo-text">BIZOOP</span>{" "}
           </button>
           <nav className="header-nav">
             <button
@@ -135,7 +140,7 @@ const Header = () => {
             >
               Home
             </button>
-
+ 
             <button
               type="button"
               onClick={() => goToSection("vision")}
@@ -147,7 +152,7 @@ const Header = () => {
             >
               Vision
             </button>
-
+ 
             <button
               type="button"
               className={
@@ -160,7 +165,7 @@ const Header = () => {
             >
               Products
             </button>
-
+ 
             <button
               type="button"
               className={
@@ -173,7 +178,7 @@ const Header = () => {
             >
               Pricing
             </button>
-
+ 
             <button
               type="button"
               onClick={() => goToSection("faq")}
@@ -199,9 +204,9 @@ const Header = () => {
             >
               Log in
             </button>
-
+ 
             <ThemeToggle />
-
+ 
             <button
               type="button"
               className="header-start-btn"
@@ -237,16 +242,15 @@ const Header = () => {
           <div className="header-mobile-theme-row">
             <ThemeToggle />
           </div>
-
           <nav className="header-mobile-nav">
             <button type="button" onClick={goHome}>
               Home
             </button>
-
+ 
             <button type="button" onClick={() => goToSection("vision")}>
               Vision
             </button>
-
+ 
             <button
               type="button"
               onClick={() => {
@@ -256,7 +260,7 @@ const Header = () => {
             >
               Products
             </button>
-
+ 
             <button
               type="button"
               onClick={() => {
@@ -266,12 +270,11 @@ const Header = () => {
             >
               Pricing
             </button>
-
+ 
             <button type="button" onClick={() => goToSection("faq")}>
               FAQ
             </button>
           </nav>
-
           <div className="header-mobile-actions">
             <button
               type="button"
@@ -285,7 +288,7 @@ const Header = () => {
             >
               Log in
             </button>
-
+ 
             <button
               type="button"
               className="header-start-btn"
@@ -302,5 +305,6 @@ const Header = () => {
     </div>
   );
 };
-
+ 
 export default Header;
+ 

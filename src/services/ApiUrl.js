@@ -1,1 +1,1 @@
-export const apiUrl = "https://tranzoop-platform-api.onrender.com/api";
+export const apiUrl = "https://tranzoop.com/api";

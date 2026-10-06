@@ -13,21 +13,14 @@ import {
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { addPlans, editPlan } from "../../../redux/Auth/PlansSlice";
-import { getAllErps } from "../../../redux/Auth/ErpsSlice";
+import { addPlans, editPlan} from "../../../redux/Auth/PlansSlice";
 
-const DEFAULT_FEATURES = [
-  "Vehicle Management",
-  "Trip Management",
-  "Driver Management",
-  "Reports",
-  "Advanced Dashboard",
-];
+
+
 
 const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
   const dispatch = useDispatch();
   const { erps, loading } = useSelector((state) => state.erps);
-  const isEdit = Boolean(isEditMode && plan);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [newFeature, setNewFeature] = useState("");
@@ -38,18 +31,14 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
     description: "",
     amount: "",
     currency: "INR",
-    billingCycle: "",
+    billingCycle: "MONTHLY",
     durationDays: 365,
     trialDays: 15,
-    features: [...DEFAULT_FEATURES],
+    features: [],
     status: "ACTIVE",
     isPublic: true,
     displayOrder: 1,
   });
-
-  useEffect(() => {
-    dispatch(getAllErps());
-  }, [dispatch]);
 
   const updateField = (field, value) => {
     setForm((prev) => ({
@@ -73,7 +62,7 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
       erpId: "",
     }));
   };
-  
+
   const handleNameChange = (value) => {
     setForm((prev) => ({
       ...prev,
@@ -181,27 +170,45 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
     return Object.keys(nextErrors).length === 0;
   };
 
+
+  useEffect(() => {
+    if (isEditMode && plan) {
+      setForm({
+         erpId: typeof plan.erpId === "object"   ? plan.erpId?._id || ""  : plan.erpId || "",
+        name: plan.name || "",
+        code: plan.code || "",
+        description: plan.description || "",
+        amount: plan.amount ?? "",
+        currency: plan.currency || "INR",
+        billingCycle: plan.billingCycle || "",
+        durationDays: plan.durationDays ?? 365,
+        trialDays: plan.trialDays ?? 15,
+        features: plan.features || [],
+        status: plan.status || "ACTIVE",
+        isPublic: plan.isPublic ?? true,
+        displayOrder: plan.displayOrder ?? 1,
+      });
+    } else if (!isEditMode) {
+      setForm({
+        erpId: "",
+        name: "",
+        code: "",
+        description: "",
+        amount: "",
+        currency: "INR",
+        billingCycle: "MONTHLY",
+        durationDays: 365,
+        trialDays: 15,
+        features: [],
+        status: "ACTIVE",
+        isPublic: true,
+        displayOrder: 1,
+      });
+    }
+  }, [isEditMode, plan]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      if (isEditMode) {
-        await dispatch(
-          editPlan({
-            erpCode: plan.erpCode,
-            data: form,
-          }),
-        ).unwrap();
-
-        onClose();
-
-        return;
-      }
-
-      // Your existing create-plan logic here
-    } catch (error) {
-      console.error("Plan save error:", error);
-    }
 
     if (submitting) return;
 
@@ -225,66 +232,48 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
       displayOrder: Number(form.displayOrder),
     };
 
-    console.log("Plan payload:", payload);
-
     try {
       setSubmitting(true);
 
-      const response = await dispatch(addPlans(payload)).unwrap();
+      if (isEditMode) {
+        const response = await dispatch(
+          editPlan({
+            id: plan._id,
+            data: payload,
+          })
+        );
 
-      console.log("Plan creation response:", response);
+        if (response?.payload) {
+          toast.success(
+            response.payload.message || "Plan updated successfully."
+          );
+          onClose();
+        } else {
+          toast.error(
+            response?.error?.message || "Failed to update plan."
+          );
+        }
+      } else {
+        const response = await dispatch(addPlans(payload));
 
-      toast.success(response?.message || "Plan created successfully.");
-
-      onClose();
+        if (response?.payload) {
+          toast.success(
+            response.payload.message || "Plan created successfully."
+          );
+          onClose();
+        } else {
+          toast.error(
+            response?.error?.message || "Failed to create plan."
+          );
+        }
+      }
     } catch (error) {
       console.error("Plan submit error:", error);
-
-      toast.error(error?.message || error?.error || "Failed to create plan.");
+      toast.error(error?.message || "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    dispatch(getAllErps());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isEditMode && plan) {
-      setForm({
-        erpId: plan.erpId || "",
-        name: plan.name || "",
-        code: plan.code || "",
-        description: plan.description || "",
-        amount: plan.amount ?? "",
-        currency: plan.currency || "INR",
-        billingCycle: plan.billingCycle || "",
-        durationDays: plan.durationDays ?? 365,
-        trialDays: plan.trialDays ?? 15,
-        features: plan.features || [],
-        status: plan.status || "ACTIVE",
-        isPublic: plan.isPublic ?? true,
-        displayOrder: plan.displayOrder ?? 1,
-      });
-    } else if (!isEditMode) {
-      setForm({
-        erpId: "",
-        name: "",
-        code: "",
-        description: "",
-        amount: "",
-        currency: "INR",
-        billingCycle: "",
-        durationDays: 365,
-        trialDays: 15,
-        features: [...DEFAULT_FEATURES],
-        status: "ACTIVE",
-        isPublic: true,
-        displayOrder: 1,
-      });
-    }
-  }, [isEditMode, plan]);
 
   // ✅ Conditional return comes AFTER all hooks
   if (!open) return null;
@@ -298,10 +287,10 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
         <div className="pp-modal-header">
           <div>
             <div className="pp-modal-kicker">
-              {isEdit ? "EDIT PRICING PLAN" : "NEW PRICING PLAN"}
+              {isEditMode ? "EDIT PRICING PLAN" : "NEW PRICING PLAN"}
             </div>
 
-            <h2>{isEdit ? "Edit Plan" : "Create Plan"}</h2>
+            <h2>{isEditMode ? "Edit Plan" : "Create Plan"}</h2>
 
             <p>Configure pricing, features and subscription settings.</p>
           </div>
@@ -351,6 +340,11 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
                     </option>
                   ))}
                 </select>
+                {errors.erpId && (
+                  <small className="pp-field-error">
+                    {errors.erpId}
+                  </small>
+                )}
               </div>
 
               <div className="pp-field">
@@ -611,9 +605,7 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
 
             <div className="pp-feature-selector">
               <div className="pp-feature-grid">
-                {Array.from(
-                  new Set([...DEFAULT_FEATURES, ...form.features]),
-                ).map((feature) => (
+                {form.features.map((feature) => (
                   <label className="pp-feature-option" key={feature}>
                     <input
                       type="checkbox"
@@ -747,12 +739,12 @@ const PricingPlanFormModal = ({ open, onClose, plan, isEditMode }) => {
               {submitting ? (
                 <>
                   <Loader2 className="pp-form-loader" />
-                  {isEdit ? "Saving..." : "Creating..."}
+                  {isEditMode ? "Saving..." : "Creating..."}
                 </>
               ) : (
                 <>
-                  {isEdit ? <RiSaveLine /> : <RiAddLine />}
-                  {isEdit ? "Save Changes" : "Create Plan"}
+                  {isEditMode ? <RiSaveLine /> : <RiAddLine />}
+                  {isEditMode ? "Save Changes" : "Create Plan"}
                 </>
               )}
             </button>

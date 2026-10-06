@@ -26,7 +26,7 @@ import PricingPlanFormModal from "./PricingPlanFormModal";
 import PricingPlanDetailsModal from "./PricingPlanDetailsModal";
 import "../../../assets/styles/adminPricing.css";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePlan, getPublicByErpCode } from "../../../redux/Auth/PlansSlice";
+import { deletePlan, getPublicByErpCode, setPlans } from "../../../redux/Auth/PlansSlice";
 import { getAllErps } from "../../../redux/Auth/ErpsSlice";
 import { toast } from "react-toastify";
 
@@ -34,7 +34,7 @@ const ITEMS_PER_PAGE = 6;
 
 const PricingPlan = () => {
   const dispatch = useDispatch();
-  const { loading: plansLoading } = useSelector((state) => state.plans);
+  const { plans, loading: plansLoading } = useSelector((state) => state.plans);
   const { erps, loading: erpsLoading } = useSelector((state) => state.erps);
 
   const erpList = Array.isArray(erps) ? erps : [];
@@ -47,12 +47,11 @@ const PricingPlan = () => {
   const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [openErps, setOpenErps] = useState({});
-  const [allPlans, setAllPlans] = useState([]);
-  const plans = allPlans;
   const [isEditMode, setIsEditMode] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingPlan, setDeletingPlan] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+
+
 
   const openDeleteModal = (plan) => {
     setDeletingPlan(plan);
@@ -60,7 +59,7 @@ const PricingPlan = () => {
   };
 
   const closeDeleteModal = () => {
-    if (deleteLoading) return;
+    if (plansLoading) return;
     setShowDeleteModal(false);
     setDeletingPlan(null);
   };
@@ -70,63 +69,47 @@ const PricingPlan = () => {
       return;
     }
     try {
-      setDeleteLoading(true);
       const response = await dispatch(deletePlan(deletingPlan._id)).unwrap();
-      console.log("Plan deleted successfully:", response);
-      setAllPlans((prevPlans) =>
-        prevPlans.filter((plan) => plan._id !== deletingPlan._id),
-      );
       toast.success(response?.message || "Plan deleted successfully.");
       setShowDeleteModal(false);
       setDeletingPlan(null);
     } catch (error) {
-      console.error("Delete plan error:", error);
       toast.error(error?.message || error?.error || "Failed to delete plan.");
-    } finally {
-      setDeleteLoading(false);
     }
   };
 
   useEffect(() => {
-    const loadErps = async () => {
-      try {
-        const response = await dispatch(getAllErps()).unwrap();
-        const erpList = response?.data || [];
-      } catch (error) {}
-    };
-    loadErps();
+    dispatch(getAllErps());
   }, [dispatch]);
 
-  useEffect(() => {
-    const loadPlans = async () => {
-      try {
-        if (erpFilter === "All") {
-          if (erpList.length === 0) {
-            setAllPlans([]);
-            return;
-          }
-          const responses = await Promise.all(
-            erpList.map((erp) =>
-              dispatch(getPublicByErpCode(erp.code)).unwrap(),
-            ),
-          );
-          const combinedPlans = responses.flatMap(
-            (response) => response?.data || [],
-          );
-          setAllPlans(combinedPlans);
-          return;
-        }
-        const response = await dispatch(getPublicByErpCode(erpFilter)).unwrap();
-
-        setAllPlans(response?.data || []);
-      } catch (error) {
-        setAllPlans([]);
+ useEffect(() => {
+  const loadPlans = async () => {
+    if (erpFilter === "All") {
+      if (erpList.length === 0) {
+        dispatch(setPlans([]));
+        return;
       }
-    };
 
-    loadPlans();
-  }, [dispatch, erpFilter, erpList]);
-  
+      const responses = await Promise.all(
+        erpList.map((erp) =>
+          dispatch(getPublicByErpCode(erp.code)).unwrap()
+        )
+      );
+
+      const allPlans = responses.flatMap(
+        (response) => response?.data || []
+      );
+
+      dispatch(setPlans(allPlans));
+      return;
+    }
+
+    dispatch(getPublicByErpCode(erpFilter));
+  };
+
+  loadPlans();
+}, [dispatch, erpFilter, erpList]);
+
   const truncateDescription = (description) => {
     if (!description) return "-";
     const words = description.trim().split(/\s+/);
@@ -135,6 +118,7 @@ const PricingPlan = () => {
     }
     return `${words.slice(0, 3).join(" ")}...`;
   };
+
   const toggleErp = (erpCode) => {
     setOpenErps((prev) => ({
       ...prev,
@@ -155,6 +139,7 @@ const PricingPlan = () => {
   const statusOptions = useMemo(() => {
     return [...new Set(plans.map((plan) => plan.status).filter(Boolean))];
   }, [plans]);
+
   const filteredPlans = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
 
@@ -166,18 +151,31 @@ const PricingPlan = () => {
         plan.erpCode?.toLowerCase().includes(search) ||
         plan.description?.toLowerCase().includes(search);
 
-      const matchesErp = erpFilter === "All" || plan.erpCode === erpFilter;
+      const matchesErp =
+        erpFilter === "All" || plan.erpCode === erpFilter;
 
       const matchesStatus =
         statusFilter === "All" || plan.status === statusFilter;
 
       const matchesBilling =
-        billingFilter === "All" || plan.billingCycle === billingFilter;
+        billingFilter === "All" ||
+        plan.billingCycle === billingFilter;
 
-      return matchesSearch && matchesErp && matchesStatus && matchesBilling;
+      return (
+        matchesSearch &&
+        matchesErp &&
+        matchesStatus &&
+        matchesBilling
+      );
     });
-  }, [plans, searchTerm, erpFilter, statusFilter, billingFilter]);
-
+  }, [
+    plans,
+    searchTerm,
+    erpFilter,
+    statusFilter,
+    billingFilter,
+  ]);
+  
   const groupedPlans = useMemo(() => {
     return filteredPlans.reduce((groups, plan) => {
       const erpCode = plan.erpCode || "UNKNOWN";
@@ -216,6 +214,8 @@ const PricingPlan = () => {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+
 
   const openAddPlanModal = () => {
     setSelectedPlan(null);
@@ -435,14 +435,14 @@ const PricingPlan = () => {
               erpFilter !== "All" ||
               billingFilter !== "All" ||
               statusFilter !== "All") && (
-              <button
-                type="button"
-                className="pp-reset-btn"
-                onClick={handleClearFilters}
-              >
-                Reset
-              </button>
-            )}
+                <button
+                  type="button"
+                  className="pp-reset-btn"
+                  onClick={handleClearFilters}
+                >
+                  Reset
+                </button>
+              )}
           </div>
         </div>
 
@@ -501,9 +501,8 @@ const PricingPlan = () => {
                     </div>
 
                     <RiArrowDownSLine
-                      className={`pp-table-accordion-arrow ${
-                        isOpen ? "open" : ""
-                      }`}
+                      className={`pp-table-accordion-arrow ${isOpen ? "open" : ""
+                        }`}
                     />
                   </button>
 
@@ -523,7 +522,6 @@ const PricingPlan = () => {
                             <th>Actions</th>
                           </tr>
                         </thead>
-
                         <tbody>
                           {erpPlans.map((plan) => (
                             <tr
@@ -534,10 +532,10 @@ const PricingPlan = () => {
                               }}
                             >
                               {/* CODE */}
-                              <td>{plan.code || "-"}</td>
+                              <td><span className="pp-code">{plan.code || "-"}</span></td>
 
                               {/* DURATION */}
-                              <td>{plan.durationDays ?? "-"}</td>
+                              <td><span className="pp-duration">{plan.durationDays ?? "-"}</span></td>
 
                               {/* BILLING */}
                               <td>
@@ -750,7 +748,7 @@ const PricingPlan = () => {
                 type="button"
                 className="pp-delete-cancel-btn"
                 onClick={closeDeleteModal}
-                disabled={deleteLoading}
+                disabled={plansLoading}
               >
                 Cancel
               </button>
@@ -759,9 +757,9 @@ const PricingPlan = () => {
                 type="button"
                 className="pp-delete-confirm-btn"
                 onClick={handleDeletePlan}
-                disabled={deleteLoading}
+                disabled={plansLoading}
               >
-                {deleteLoading ? (
+                {plansLoading ? (
                   <>
                     <span className="pp-delete-spinner" />
                     Deleting...

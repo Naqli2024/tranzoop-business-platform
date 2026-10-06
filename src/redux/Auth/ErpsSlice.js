@@ -30,32 +30,60 @@ export const getAllErps = createAsyncThunk(
   },
 );
 
+//GET ERPS ID
+export const getErpById = createAsyncThunk(
+  "getErpById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await AuthService.get(`/erps/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleApiError(error));
+    }
+  }
+);
+
 const ErpsSlice = createSlice({
   name: "erps",
   initialState: {
     loading: false,
     erps: [],
+    erpDetail: null,
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     const handlePending = (state) => {
       state.loading = true;
-    };
-    const handleFullFilled = (state, action) => {
-      state.loading = false;
-      state.erps = action.payload.data;
       state.error = null;
     };
+    const handleFulfilled = (state, action) => {
+      state.loading = false;
+      state.error = null;
+      switch (action.type) {
+        case addErps.fulfilled.type:
+          // ADD ERP
+          break;
+        case getAllErps.fulfilled.type:
+          state.erps = action.payload.data;
+          break;
+        case getErpById.fulfilled.type:
+          state.erpDetail = action.payload.data;
+          break;
+        default:
+          break;
+      }
+    };
+
     const handleRejected = (state, action) => {
       state.loading = false;
-      state.erps = null;
       state.error = action.payload;
     };
-    [addErps, getAllErps].forEach((action) => {
+
+    [addErps, getAllErps, getErpById].forEach((action) => {
       builder
         .addCase(action.pending, handlePending)
-        .addCase(action.fulfilled, handleFullFilled)
+        .addCase(action.fulfilled, handleFulfilled)
         .addCase(action.rejected, handleRejected);
     });
   },

@@ -10,167 +10,18 @@ import {
   FiArrowRight,
   FiCalendar,
   FiShield,
+  FiCheckCircle,
+  FiPackage,
 } from "react-icons/fi";
-
-const PRODUCTS = {
-  tyre: {
-    name: "Tyre BOS",
-    description: "Complete tyre business management system",
-    icon: "tyre",
-  },
-  transport: {
-    name: "Transport BOS",
-    description: "Transport management system",
-    icon: "transport",
-  },
-  tailor: {
-    name: "Tailor BOS",
-    description: "Complete tailoring business management system",
-    icon: "tailor",
-  },
-};
-
-const PLANS = {
-  free: {
-    name: "Free Plan",
-    price: 0,
-    period: "month",
-  },
-  standard: {
-    name: "Standard Plan",
-    price: 999,
-    period: "month",
-  },
-  premium: {
-    name: "Premium Plan",
-    price: 1999,
-    period: "month",
-  },
-};
-
-const PRODUCT_PLANS = {
-  tyre: {
-    free: {
-      name: "Free Plan",
-      price: 0,
-    },
-    standard: {
-      name: "Standard Plan",
-      price: 799,
-    },
-    premium: {
-      name: "Premium Plan",
-      price: 1599,
-    },
-  },
-
-  tailor: {
-    free: {
-      name: "Free Plan",
-      price: 0,
-    },
-    standard: {
-      name: "Standard Plan",
-      price: 699,
-    },
-    premium: {
-      name: "Premium Plan",
-      price: 1399,
-    },
-  },
-
-  transport: {
-    free: {
-      name: "Free Plan",
-      price: 0,
-    },
-    standard: {
-      name: "Standard Plan",
-      price: 999,
-    },
-    premium: {
-      name: "Premium Plan",
-      price: 1999,
-    },
-  },
-};
-
-const PRODUCT_FEATURES = {
-  transport: [
-    {
-      icon: <FiTruck />,
-      title: "Unlimited vehicles",
-    },
-    {
-      icon: <FiFileText />,
-      title: "Trip management",
-    },
-    {
-      icon: <FiUser />,
-      title: "Driver management",
-    },
-    {
-      icon: <FiBarChart2 />,
-      title: "Reports & analytics",
-    },
-    {
-      icon: <FiMoreHorizontal />,
-      title: "And more",
-    },
-  ],
-
-  tyre: [
-    {
-      icon: <FiTruck />,
-      title: "Tyre inventory",
-    },
-    {
-      icon: <FiFileText />,
-      title: "Sales management",
-    },
-    {
-      icon: <FiUser />,
-      title: "Customer management",
-    },
-    {
-      icon: <FiBarChart2 />,
-      title: "Reports & analytics",
-    },
-    {
-      icon: <FiMoreHorizontal />,
-      title: "And more",
-    },
-  ],
-
-  tailor: [
-    {
-      icon: <FiFileText />,
-      title: "Order management",
-    },
-    {
-      icon: <FiUser />,
-      title: "Customer management",
-    },
-    {
-      icon: <FiCalendar />,
-      title: "Delivery tracking",
-    },
-    {
-      icon: <FiBarChart2 />,
-      title: "Reports & analytics",
-    },
-    {
-      icon: <FiMoreHorizontal />,
-      title: "And more",
-    },
-  ],
-};
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getAllErps } from "../../redux/Auth/ErpsSlice";
+import { getPublicByErpCode } from "../../redux/Auth/PlansSlice";
+import { ErpLogin } from "./ErpLogin";
 
 const getNextRenewalDate = () => {
   const date = new Date();
-
   date.setMonth(date.getMonth() + 1);
-
   return date.toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "long",
@@ -178,46 +29,35 @@ const getNextRenewalDate = () => {
   });
 };
 
-const getProductIcon = (slug) => {
-  switch (slug) {
-    case "transport":
-      return <FiTruck />;
-
-    case "tyre":
-      return <FiShield />;
-
-    case "tailor":
-      return <FiFileText />;
-
-    default:
-      return <FiGrid />;
-  }
-};
-
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch()
 
-  const productSlug =
-    searchParams.get("product") ||
-    location.state?.product?.slug ||
-    "transport";
+  const { erps } = useSelector((state) => state.erps);
+  const { plans } = useSelector((state) => state.plans);
 
-  const planId =
-    searchParams.get("plan") ||
-    location.state?.selectedPlan?.id ||
-    "standard";
+  const erpCode = searchParams.get("erpCode") || location.state?.erp?.code;
 
-  const product =
-    PRODUCTS[productSlug] ||
-    location.state?.product ||
-    PRODUCTS.transport;
 
-  const selectedPlan =
-    PRODUCT_PLANS[productSlug]?.[planId] ||
-    location.state?.selectedPlan ||
-    PLANS.standard;
+  useEffect(() => {
+    dispatch(getAllErps());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (erpCode) {
+      dispatch(getPublicByErpCode(erpCode));
+    }
+  }, [dispatch, erpCode]);
+
+
+  const planId = searchParams.get("planId") || location.state?.selectedPlan?._id;
+
+  const selectedErp = erps?.find((erp) => erp.code === erpCode);
+
+  const selectedPlan = plans?.find((plan) => plan._id === planId);
+
 
   const pricing = location.state?.pricing || {};
 
@@ -230,17 +70,13 @@ const PaymentSuccess = () => {
   const nextRenewal =
     location.state?.nextRenewal || getNextRenewalDate();
 
-  const price =
-    pricing.total ??
-    selectedPlan.price ??
-    0;
+  const price = selectedPlan?.amount ?? 0;
 
-  const features =
-    PRODUCT_FEATURES[productSlug] ||
-    PRODUCT_FEATURES.transport;
-
-  const handleLogin = () => {
-    navigate("/login");
+  const handleLogin = (erpName) => {
+    const url = ErpLogin(erpName);
+    if (url) {
+      window.location.href = url;
+    }
   };
 
   return (
@@ -252,140 +88,100 @@ const PaymentSuccess = () => {
               <FiCheck />
             </div>
           </div>
-
           <h1>Payment Successful!</h1>
-
           <p className="ps-success-subtitle">
             Your subscription is now active
           </p>
-
           <p className="ps-success-description">
             Thank you for choosing BIZOOP. Your{" "}
-            {product.name} account is ready to use.
+            {selectedErp?.name} account is ready to use.
             <br />
             You can now start managing your business with
             powerful tools.
           </p>
-
         </section>
 
         <section className="ps-subscription-card">
           <div className="ps-subscription-main">
             <div className="ps-product-info">
-
               <div className="ps-product-icon">
-                {getProductIcon(productSlug)}
+                <FiPackage />
               </div>
-
               <div className="ps-product-content">
-
-                <h2>{product.name}</h2>
-
+                <h2>{selectedErp?.name}</h2>
                 <p className="ps-product-type">
-                  {product.description}
+                  {selectedErp?.description}
                 </p>
-
                 <p className="ps-product-description">
-                  {productSlug === "transport" &&
-                    "Manage vehicles, drivers, trips, customers and billing from one powerful platform."}
-
-                  {productSlug === "tyre" &&
-                    "Manage tyre inventory, customers, sales and business operations from one platform."}
-
-                  {productSlug === "tailor" &&
-                    "Manage customers, orders, measurements, deliveries and tailoring operations."}
+                  {selectedErp?.shortDescription}
                 </p>
-
               </div>
-
             </div>
             <div className="ps-plan-info">
-
               <div className="ps-status">
                 <span className="ps-status-dot" />
-                Active
+                {selectedErp?.status}
               </div>
-
               <div className="ps-detail-row">
                 <span>Plan</span>
-                <strong>{selectedPlan.name}</strong>
+                <strong>{selectedPlan?.name}</strong>
               </div>
-
               <div className="ps-detail-row">
                 <span>Price</span>
                 <strong>
                   ₹{Number(price).toLocaleString("en-IN")}
-                  {" / month"}
+                  {" / "}
+                  {selectedPlan?.billingCycle === "YEARLY"
+                    ? "year"
+                    : "month"}
                 </strong>
               </div>
-
               <div className="ps-detail-row">
                 <span>Next renewal</span>
                 <strong>{nextRenewal}</strong>
               </div>
-
               <div className="ps-detail-row">
                 <span>Payment method</span>
                 <strong>{paymentMethod}</strong>
               </div>
-
               <div className="ps-detail-row">
                 <span>Transaction ID</span>
                 <strong>{transactionId}</strong>
               </div>
-
             </div>
-
           </div>
-
           <div className="ps-features">
-
             <h3>What's included in your plan</h3>
-
             <div className="ps-feature-list">
-
-              {features.map((feature, index) => (
+              {selectedPlan?.features?.map((feature, index) => (
                 <div
                   className="ps-feature"
                   key={index}
                 >
                   <div className="ps-feature-icon">
-                    {feature.icon}
+                    <FiCheckCircle />
                   </div>
-
-                  <span>{feature.title}</span>
+                  <span>{feature}</span>
                 </div>
               ))}
-
             </div>
-
           </div>
-
         </section>
 
         <section className="ps-actions">
-
-          <button
-            type="button"
+          <button type="button"
             className="ps-primary-button"
-            onClick={handleLogin}
-          >
-            <span>
-              Login {product.name}
-            </span>
-
+            onClick={() => handleLogin(selectedErp?.name)}>
+            <span>Login {selectedErp?.name}</span>
             <FiArrowRight />
           </button>
         </section>
 
         <footer className="ps-footer">
-
           <p>
             Welcome to a smarter way to run your business.
           </p>
-
           <div className="ps-footer-line" />
-
         </footer>
 
       </main>
