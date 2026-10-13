@@ -5,6 +5,7 @@ const products = [
   {
     id: 1,
     slug: "tyre",
+    url: "tyreshop",
     category: "RETAIL OPERATIONS",
     title: "Tyre Shop",
     shortTitle: "TYRE SHOP",
@@ -22,6 +23,7 @@ const products = [
   {
     id: 2,
     slug: "tailor",
+    url: "",
     category: "BUSINESS OPERATIONS",
     title: "Tailor Shop",
     shortTitle: "TAILOR SHOP",
@@ -39,6 +41,7 @@ const products = [
   {
     id: 3,
     slug: "transport",
+    url: "transport",
     category: "TRANSPORT OPERATIONS",
     title: "Transport Management",
     shortTitle: "TRANSPORT MANAGEMENT",
@@ -58,7 +61,8 @@ const products = [
 const Products = () => {
   const navigate = useNavigate();
   const goToPricing = (product) => {
-    navigate(`${product.path}?product=${product.slug}`);
+    // navigate(`${product.path}?product=${product.slug}`);
+    window.location.href = `https://bizoop.in/${product.url}`;
   };
 
   return (

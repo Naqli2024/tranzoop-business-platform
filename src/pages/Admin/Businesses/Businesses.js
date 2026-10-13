@@ -159,7 +159,7 @@ const Businesses = () => {
             </div>
             <div>
               <h1>Businesses</h1>
-              <p>Manage businesses, subscriptions and BOS access across TRANZOOP Marketplace.</p>
+              <p>Manage businesses, subscriptions and BOS access across Bizoop Marketplace.</p>
             </div>
           </div>
         </div>

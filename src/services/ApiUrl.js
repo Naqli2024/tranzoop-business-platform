@@ -1,1 +1,1 @@
-export const apiUrl = "https://tranzoop.com/api";
+export const apiUrl = "https://bizoop.in/api";

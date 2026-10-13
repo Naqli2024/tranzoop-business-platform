@@ -1,10 +1,10 @@
 export const ErpLogin = (erpName) => {
   if (erpName === "Transport ERP") {
-    return "https://tranzoop.com/transport/login";
+    return "https://bizoop.in/transport/login";
   }
  
   if (erpName === "Tyre Shop ERP") {
-    return "https://tranzoop.com/tyreshop/login";
+    return "https://bizoop.in/tyreshop/login";
   }
  
   return "";
