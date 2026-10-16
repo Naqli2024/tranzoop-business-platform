@@ -14,6 +14,7 @@ import moreSolutions from "../../../assets/images/more-solutions.png";
 const products = [
   {
     id: "tyre",
+    url: "transport",
     number: "01",
     title: "Tyre BOS",
     category: "TYRE & AUTOMOTIVE",
@@ -32,11 +33,11 @@ const products = [
 
   {
     id: "transport",
+    url: "tyreshop",
     number: "02",
     title: "Transport BOS",
     category: "TRANSPORT & LOGISTICS",
-    description:
-      "Fleet, drivers and trips for transport businesses.",
+    description: "Fleet, drivers and trips for transport businesses.",
     image: transport,
     icon: <RiTruckLine />,
     accent: "var(--brand-blue)",
@@ -50,11 +51,11 @@ const products = [
 
   {
     id: "tailor",
+    url: "",
     number: "03",
     title: "Tailor BOS",
     category: "TAILORING & APPAREL",
-    description:
-      "Measurements, orders and delivery for tailoring shops.",
+    description: "Measurements, orders and delivery for tailoring shops.",
     image: tailorShop,
     icon: <RiScissors2Line />,
     accent: "var(--brand-lime)",
@@ -87,6 +88,12 @@ const products = [
 ];
 
 const ProductsSection = () => {
+
+  const goToPricing = (product) => {
+    // navigate(`${product.path}?product=${product.slug}`);
+    window.location.href = `https://bizoop.in/${product.url}`;
+  };
+
   return (
     <section className="generated-products-section" id="products">
       <div className="generated-products-decoration generated-products-decoration-left" />
@@ -94,7 +101,6 @@ const ProductsSection = () => {
 
       <div className="landing-page-container generated-products-container">
         <div className="generated-products-header" data-reveal>
-
           <div className="generated-products-eyebrow">
             BUSINESS OPERATING SYSTEMS
           </div>
@@ -106,15 +112,12 @@ const ProductsSection = () => {
           </h2>
 
           <p className="generated-products-subtitle">
-            Choose the Business Operating System built around the way
-            your industry actually works.
+            Choose the Business Operating System built around the way your
+            industry actually works.
           </p>
-
         </div>
         <div className="generated-products-scroll">
-
           <div className="generated-products-grid">
-
             {products.map((product, index) => (
               <article
                 key={product.id}
@@ -126,7 +129,6 @@ const ProductsSection = () => {
                 }}
               >
                 <div className="generated-product-visual">
-
                   <div className="generated-product-image-bg" />
 
                   <img
@@ -142,10 +144,9 @@ const ProductsSection = () => {
                       COMING SOON
                     </span>
                   )}
-
                 </div>
                 <div className="generated-product-content">
-<div
+                  <div
                     className="generated-product-floating-icon"
                     style={{
                       "--product-accent": product.accent,
@@ -157,30 +158,20 @@ const ProductsSection = () => {
                     {product.category}
                   </div>
 
-                  <h3>
-                    {product.title}
-                  </h3>
+                  <h3>{product.title}</h3>
 
-                  <p>
-                    {product.description}
-                  </p>
+                  <p>{product.description}</p>
 
                   <ul className="generated-product-features">
-
                     {product.modules.map((module) => (
                       <li key={module}>
-
                         <span className="generated-feature-check">
                           <RiCheckLine />
                         </span>
 
-                        <span>
-                          {module}
-                        </span>
-
+                        <span>{module}</span>
                       </li>
                     ))}
-
                   </ul>
                   <button
                     className={`generated-product-link ${
@@ -188,42 +179,30 @@ const ProductsSection = () => {
                         ? "generated-product-link-disabled"
                         : ""
                     }`}
+                    onClick={() => goToPricing(product)}
                   >
                     {product.comingSoon
                       ? "Coming Soon"
                       : `Explore ${product.title}`}
 
-                    {!product.comingSoon && (
-                      <RiArrowRightLine />
-                    )}
+                    {!product.comingSoon && <RiArrowRightLine />}
                   </button>
-
                 </div>
-
               </article>
             ))}
-
           </div>
-
         </div>
         <div className="generated-products-bottom" data-reveal>
-
           <div className="generated-products-bottom-line" />
 
-          <span>
-            DIFFERENT INDUSTRIES
-          </span>
+          <span>DIFFERENT INDUSTRIES</span>
 
           <RiArrowRightLine />
 
-          <strong>
-            ONE DIGITAL OFFICE
-          </strong>
+          <strong>ONE DIGITAL OFFICE</strong>
 
           <div className="generated-products-bottom-line" />
-
         </div>
-
       </div>
 
       <div className="generated-products-wave">
@@ -246,7 +225,6 @@ const ProductsSection = () => {
           />
         </svg>
       </div>
-
     </section>
   );
 };
