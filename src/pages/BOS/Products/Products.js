@@ -1,15 +1,15 @@
 import "../../../assets/styles/products.css";
 import { useNavigate } from "react-router-dom";
-
+ 
 const products = [
   {
     id: 1,
     slug: "tyre",
-    url: "tyreshop",
     category: "RETAIL OPERATIONS",
     title: "Tyre Shop",
     shortTitle: "TYRE SHOP",
     path: "/pricing",
+    accent: "var(--primary)",
     description:
       "Manage tyre inventory, purchases, sales, customers, suppliers and service operations from one place.",
     features: [
@@ -23,11 +23,11 @@ const products = [
   {
     id: 2,
     slug: "tailor",
-    url: "",
     category: "BUSINESS OPERATIONS",
     title: "Tailor Shop",
     shortTitle: "TAILOR SHOP",
     path: "/pricing",
+    accent: "var(--brand-lime)",
     description:
       "Manage customers, measurements, orders, fabrics, stitching workflow and delivery with ease.",
     features: [
@@ -41,11 +41,11 @@ const products = [
   {
     id: 3,
     slug: "transport",
-    url: "transport",
     category: "TRANSPORT OPERATIONS",
     title: "Transport Management",
     shortTitle: "TRANSPORT MANAGEMENT",
     path: "/pricing",
+     accent: "var(--brand-blue)",
     description:
       "Manage vehicles, drivers, trips, documents, deliveries and transport operations from one platform.",
     features: [
@@ -57,14 +57,14 @@ const products = [
     icon: "🚛",
   },
 ];
-
+ 
 const Products = () => {
   const navigate = useNavigate();
   const goToPricing = (product) => {
     // navigate(`${product.path}?product=${product.slug}`);
     window.location.href = `https://bizoop.in/${product.url}`;
   };
-
+ 
   return (
     <div className="products-page">
       <section className="products-section">
@@ -83,13 +83,14 @@ const Products = () => {
           </div>
           <div className="products-stage">
             <div className="products-deck-glow" />
-
+ 
             <div className="products-cards">
               {products.map((product, index) => (
                 <article
                   className={`products-card products-card-${index + 1}`}
                   key={product.id}
                   style={{
+                    "--product-accent": product.accent,
                     "--products-delay": `${index * 180}ms`,
                   }}
                   onClick={() => goToPricing(product)}
@@ -99,17 +100,17 @@ const Products = () => {
                       {product.category}
                     </span>
                   </div>
-
+ 
                   <div className="products-icon">
                     {product.icon}
                   </div>
-
+ 
                   <div className="products-card-content">
                     <h2>{product.shortTitle}</h2>
-
+ 
                     <p>{product.description}</p>
                   </div>
-
+ 
                   <div className="products-features">
                     {product.features.map((feature) => (
                       <span key={feature}>
@@ -122,11 +123,11 @@ const Products = () => {
               ))}
             </div>
           </div>
-
+ 
         </div>
       </section>
     </div>
   );
 };
-
+ 
 export default Products;

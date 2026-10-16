@@ -13,7 +13,7 @@
 
   padding: 24px 20px;
 
-  background: var(--color-primary);
+  background: var(--background);
   color: var(--color-text-primary);
 
   font-family: var(--font-family);

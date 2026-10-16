@@ -28,18 +28,16 @@
   height: 74px;
  
   margin: 20px auto 0;
-  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
- 
+  background: color-mix(in srgb, var(--secondary) 78%, transparent);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
  
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border);
  
   border-radius: 20px;
  
-  box-shadow:
-    0 8px 32px var(--color-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--background) 30%, transparent);
+    
  
   transition:
     background 250ms ease,
@@ -71,7 +69,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  /* color: var(--color-accent); */
+  color: var(--foreground);
   /* font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif; */
   font-size: 22px;
   font-weight: 700;
@@ -132,7 +130,7 @@
 }
  
 .header-logo:hover {
-  color: var(--color-dark-accent);
+  color: var(--foreground);
 }
  
 .header-logo:active {
@@ -156,7 +154,7 @@
  
   background: transparent;
  
-  color: var(--color-text-primary);
+  color: var(--body-text);
  
   font-family: inherit;
   font-size: 14px;
@@ -178,13 +176,13 @@
   width: 0;
   height: 2px;
  
-  background: var(--color-accent);
+  background: var(--primary);
  
   transition: width 180ms ease;
 }
  
 .header-nav button.header-nav-active {
-  color: var(--color-accent);
+  color: var(--accent-foreground);
 }
  
 .header-nav button.header-nav-active::after {
@@ -192,7 +190,7 @@
 }
  
 .header-nav button:hover {
-  color: var(--color-accent);
+  color: var(--accent-foreground);
 }
  
 .header-nav button:hover::after {
@@ -229,7 +227,7 @@
 }
  
 .header-login-btn {
-  color: var(--color-text-primary);
+  color: var(--body-text);
  
   background: transparent;
  
@@ -238,21 +236,21 @@
  
 .header-login-btn:hover,
 .header-login-btn.header-login-active {
-  color: var(--color-accent);
+  color: var(--accent-foreground);
 }
  
 .header-start-btn {
-  color: var(--color-text-primary);
+  color: var(--primary);
  
   background: transparent;
  
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border);
 }
  
 .header-start-btn:hover {
-  background: var(--color-accent);
+  background: var(--primary);
  
-  border-color: var(--color-accent);
+  border-color: var(--border);
  
   color: var(--color-primary);
 }
@@ -285,7 +283,7 @@
  
   margin: 5px auto;
  
-  background: var(--color-text-primary);
+  background: var(--foreground);
  
   transition:
     transform 200ms ease,
@@ -319,9 +317,9 @@
  
   flex-shrink: 0;
  
-  background: var(--color-surface-soft);
+  background: var(--primary-foreground);
  
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border);
  
   border-radius: 10px;
  
@@ -346,7 +344,7 @@
  
   background: transparent;
  
-  color: var(--color-text-secondary);
+  color: var(--primary);
  
   cursor: pointer;
  
@@ -363,13 +361,13 @@
 }
  
 .dark-light-theme-btn:hover {
-  color: var(--color-text-primary);
+  color: var(--primary);
 }
  
 .dark-light-theme-btn.active {
-  background: var(--color-accent);
+  background: var(--brand-soft-green);
  
-  color: var(--color-primary);
+  color: var(--primary);
 }
  
 @media (max-width: 1080px) {
@@ -610,5 +608,3 @@
 #faq {
   scroll-margin-top: 110px;
 }
- 
- 

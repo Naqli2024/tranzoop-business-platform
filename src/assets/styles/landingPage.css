@@ -112,6 +112,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -120,6 +121,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   letter-spacing: 0;
+  overflow-x: hidden;
 }
 
 button,
@@ -899,7 +901,6 @@ a {
   grid-template-columns: repeat(6, 1fr);
   align-items: stretch;
   margin-bottom: 70px;
-
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--card);
@@ -7716,7 +7717,7 @@ a {
 
 .digital-office-visual-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -7773,11 +7774,12 @@ a {
   color: var(--body-text);
   font-size: 9px;
 }
+
 .timer-chart {
   position: relative;
   width: 100%;
   height:150px;
-}
+ }
 
 .timer-text {
   position: absolute;
@@ -7814,7 +7816,6 @@ a {
 }
 
 .goal {
-  width: 100%;
   border-radius: 20px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -7842,6 +7843,7 @@ a {
   width: 120px;
   height: 120px;
   margin: 10px auto 18px;
+  overflow: hidden;
 }
 
 

@@ -301,11 +301,11 @@ const PromisesSection = () => {
 
                   <Mockup type={promise.type} />
 
-                  
+
                 </div>
-<div className="fpp-icon">
-                    <Icon size={20} strokeWidth={2.2} />
-                  </div>
+                <div className="fpp-icon">
+                  <Icon size={20} strokeWidth={2.2} />
+                </div>
                 {/* Arrow */}
                 {index < PROMISES.length - 1 && (
                   <div className="fpp-connector">

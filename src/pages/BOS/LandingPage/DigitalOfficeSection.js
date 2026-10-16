@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import botLogo from "../../../assets/images/bot.png";
 
 import {
@@ -41,50 +41,6 @@ const DIGITAL_OFFICE_FEATURES = [
     text: "See what is happening across your business in real time.",
   },
 ];
-
-
-const TIME_SLOTS = [
-  "9:00 AM",
-  "10:00 AM",
-  "11:00 AM",
-  "1:00 PM",
-  "2:00 PM",
-  "3:00 PM",
-  "4:00 PM",
-];
-
-
-const inspectionData = [
-  {
-    label: "Document Inspection",
-    task: "Assign employee to verify business documents.",
-  },
-  {
-    label: "Invoice Inspection",
-    task: "Assign employee to check invoices.",
-  },
-  {
-    label: "Payment Inspection",
-    task: "Assign employee to verify payment records.",
-  },
-  {
-    label: "Expense Inspection",
-    task: "Assign employee to verify expenses, bills, and receipts.",
-  },
-  {
-    label: "Customer Data Inspection",
-    task: "Assign employee to verify customer information.",
-  },
-  {
-    label: "Employee Record Inspection",
-    task: "Assign employee to verify employee records.",
-  },
-  {
-    label: "Business Report Inspection",
-    task: "Assign employee to review business reports.",
-  },
-];
-
 
 const SMART_ACTIONS = [
   {
@@ -139,12 +95,6 @@ const initialGoals = [
 
 const DigitalOfficeSection = () => {
 
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [typingMessage, setTypingMessage] = useState(null);
-  const [isTyping, setIsTyping] = useState(false);
-  const typingRef = useRef(null);
   const [goals, setGoals] = useState(initialGoals);
   const [goalPercentage, setGoalPercentage] = useState(0);
   const [activeGoal, setActiveGoal] = useState(0);
@@ -210,28 +160,20 @@ const DigitalOfficeSection = () => {
           setGoalPercentage((prev) => {
             if (prev >= targetPercentage) {
               clearInterval(timer);
-
               currentGoal++;
-
               setActiveGoal(currentGoal);
-
               setTimeout(() => {
                 animateGoal();
               }, 800);
-
               return targetPercentage;
             }
-
             return prev + 1;
           });
         }, 80);
       };
-
       animateGoal();
     };
-
     runGoals();
-
     return () => {
       clearInterval(timer);
       clearTimeout(timer);
@@ -251,115 +193,9 @@ const DigitalOfficeSection = () => {
     day: "2-digit",
     month: "short",
   });
-
  
-  const scheduledTasks = inspectionData.map(
-    (item, index) => ({
-      ...item,
-      time:
-        TIME_SLOTS[index] ||
-        "Next Available",
-    })
-  );
-
-
-  const typeBotMessage = (item) => {
-    setIsTyping(true);
-    let index = 0;
-    setTypingMessage({
-      label: item.label,
-      time: item.time,
-      task: "",
-    });
-    clearInterval(typingRef.current);
-    typingRef.current = setInterval(() => {
-      index++;
-      setTypingMessage({
-        label: item.label,
-        time: item.time,
-        task: item.task.substring(0, index),
-      });
-      if (index >= item.task.length) {
-        clearInterval(
-          typingRef.current
-        );
-        typingRef.current = null;
-        setMessages((prev) => [
-          ...prev,
-          {
-            type: "bot",
-            label: item.label,
-            time: item.time,
-            task: item.task,
-          },
-        ]);
-        setTypingMessage(null);
-        setIsTyping(false);
-      }
-    }, 35);
-  };
-
-  const sendMessage = () => {
-    const text = message.trim();
-
-    if (!text || isTyping) {
-      return;
-    }
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "user",
-        text: text,
-      },
-    ]);
-
-    setMessage("");
-    const matchedItem =
-      scheduledTasks.find((item) => {
-        const searchText =
-          text.toLowerCase();
-        return (
-          item.label
-            .toLowerCase()
-            .includes(searchText) ||
-          item.task
-            .toLowerCase()
-            .includes(searchText)
-        );
-      });
-
-    if (matchedItem) {
-
-      typeBotMessage(
-        matchedItem
-      );
-
-    } else {
-
-      typeBotMessage({
-        label: "Inspection",
-        time: "",
-        task:
-          "Sorry, I couldn't find a matching inspection task.",
-      });
-
-    }
-  };
-
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
-
-  };
   return (
-
-    <section
-      className="digital-office-section"
-      id="digital-office"
-    >
+    <section className="digital-office-section" id="digital-office">
       <div className="digital-office-orb digital-office-orb-one" />
       <div className="digital-office-orb digital-office-orb-two" />
       <div className="digital-office-orb digital-office-orb-three" />
@@ -389,11 +225,7 @@ const DigitalOfficeSection = () => {
           {/* =========================
               LEFT SIDE
           ========================= */}
-
-          <div
-            className="digital-office-image-wrap"
-            data-reveal
-          >
+          <div className="digital-office-image-wrap" data-reveal>
             <div className="digital-office-image-glow" />
             <div className="digital-office-image-card">
               <div className="robot-intro">
@@ -431,17 +263,9 @@ const DigitalOfficeSection = () => {
                 <input
                   type="text"
                   placeholder="e.g. Escalate the Yuktisaar delay, draft a vendor recovery request…"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
+                 />
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsChatOpen(true);
-                    sendMessage();
-                  }}
-                  disabled={isTyping}
                   aria-label="Send message"
                 >
                   <RiArrowRightUpLine />
@@ -456,7 +280,6 @@ const DigitalOfficeSection = () => {
                     AI Smart Actions
                   </span>
                   <span className="smart-actions-count">
-
                     {SMART_ACTIONS.length}
                     {" "}
                     recommendations
@@ -624,7 +447,6 @@ const DigitalOfficeSection = () => {
           {/* =========================
               RIGHT CONTENT
           ========================= */}
-
           <div
             className="digital-office-content"
             data-reveal
